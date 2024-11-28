@@ -9,7 +9,7 @@ import { PrismaModule } from './prisma/prisma.module';;
 import { MajorsModule } from './majors/majors.module';
 
 @Module({
-  imports: [UsersModule, CompetitionsModule, ReimbursementModule, TeamsModule, MajorsModule],
+  imports: [UsersModule, CompetitionsModule, ReimbursementModule, TeamsModule, MajorsModule, PrismaModule],
   controllers: [AppController],
   providers: [AppService],
 })
