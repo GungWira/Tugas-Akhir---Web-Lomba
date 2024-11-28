@@ -5,10 +5,11 @@ import { UsersModule } from './users/users.module';
 import { CompetitionsModule } from './competitions/competitions.module';
 import { ReimbursementModule } from './reimbursement/reimbursement.module';
 import { TeamsModule } from './teams/teams.module';
-import { AchievementModule } from './achievement/achievement.module';
+import { PrismaModule } from './prisma/prisma.module';;
+import { MajorsModule } from './majors/majors.module';
 
 @Module({
-  imports: [UsersModule, CompetitionsModule, ReimbursementModule, TeamsModule, AchievementModule],
+  imports: [UsersModule, CompetitionsModule, ReimbursementModule, TeamsModule, MajorsModule],
   controllers: [AppController],
   providers: [AppService],
 })
