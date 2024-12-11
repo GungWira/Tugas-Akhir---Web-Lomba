@@ -1,4 +1,5 @@
 "use client";
+
 import Button from "@/components/Button";
 import Navbar from "@/components/Navbar";
 import NavbarLogin from "@/components/NavbarLogin";
@@ -6,20 +7,13 @@ import NavbarLogin from "@/components/NavbarLogin";
 import { useState } from "react";
 import Link from "next/link";
 
-// Ekspor bernama untuk HideIntroduction
-export function HideIntroduction() {
+export default function Home() {
   const [isIntroHidden, setIsIntroHidden] = useState(false);
 
   const handleIntroHide = () => {
     setIsIntroHidden(true);
   };
 
-  return { isIntroHidden, handleIntroHide }; // Jika ingin menggunakannya di Home
-}
-
-export default function Home() {
-  const { isIntroHidden, handleIntroHide } = HideIntroduction();
-  // FORM
   const [nim, setNim] = useState("");
   const [password, setPassword] = useState("");
 
