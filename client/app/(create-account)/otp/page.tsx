@@ -1,7 +1,6 @@
 "use client"
 
 import NavbarBack from "@/components/NavbarBack"
-import Link from "next/link"
 import { useState, useRef } from "react"
 
 

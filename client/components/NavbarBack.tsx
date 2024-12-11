@@ -3,11 +3,11 @@ import Link from "next/link";
 
 type NavbarBackProps = {
   className?: string;
-  href : {};
+  href : string;
 };
 
 const NavbarBack: React.FC<NavbarBackProps> = ({
-  className = "",
+
   href
 }) => {
   return (
