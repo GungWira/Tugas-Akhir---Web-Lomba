@@ -4,20 +4,12 @@ import { useState } from "react";
 import Link from 'next/link';
 import Navbar from "@/components/Navbar";
 
-
-// Ekspor bernama untuk HideIntroduction
-export function HideForm() {
+export default function CreateAccount() {
   const [isFormHidden, setIsFormHidden] = useState(false);
 
   const handleFormHide = () => {
     setIsFormHidden(true);
   };
-
-  return { isFormHidden, handleFormHide }; // Jika ingin menggunakannya di Home
-}
-
-export default function CreateAccount() {
-  const { isFormHidden, handleFormHide } = HideForm();
   // JURUSAN LIST
   const jurusanList = [
     "Teknik Informatika",
