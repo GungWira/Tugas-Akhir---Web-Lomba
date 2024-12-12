@@ -66,7 +66,11 @@ export default function Home() {
           credentials: 'include',
         });
         const data = await response.json()
-        setIsLogin(data)
+        if(data.ok){
+          setIsLogin(true)
+        }else{
+          setIsLogin(false)
+        }
       }catch(err :unknown){
         console.log('Error verifying login :', err)
       }
