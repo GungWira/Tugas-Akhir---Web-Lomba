@@ -63,7 +63,7 @@ export default function Home() {
           headers: {
             'Content-Type': 'application/json',
           },
-          credentials: 'include',
+          credentials: 'same-origin',
         });
         const data = await response.json()
         if(data.ok){
