@@ -1,38 +1,84 @@
 'use client';
 
-import { useState } from "react";
+import { useState, useEffect, FormEvent } from "react";
 import Link from 'next/link';
 import Navbar from "@/components/Navbar";
 
 export default function CreateAccount() {
-  const [isFormHidden, setIsFormHidden] = useState(false);
+  const [isFormHidden, setIsFormHidden] = useState(false)
+  const [majorList, setMajorList] = useState([])
+  const [error, setError] = useState<string | null>(null)
 
-  const handleFormHide = () => {
-    setIsFormHidden(true);
-  };
-  // JURUSAN LIST
-  const jurusanList = [
-    "Teknik Informatika",
-    "Sistem Informasi",
-    "Sistem Informasi Akuntansi",
-    "Desain Komunikasi Visual",
-    "Bisnis Digital",
-    "Manajemen",
-    "Akuntansi",
-    "Hukum",
-  ]
   // ANGKATAN
   const currentYear = new Date().getFullYear();
   const angkatanList = Array.from({ length: 4 }, (_, i) => currentYear - i);
   // FORM
   const [email, setEmail] = useState("")
-  const [nama, setNama] = useState("")
+  const [name, setName] = useState("")
   const [nim, setNim] = useState("")
-  const [jurusan, setJurusan] = useState("")
-  const [angkatan, setAngkatan] = useState("")
+  const [major, setMajor] = useState("")
+  const [cohort, setCohort] = useState("")
   const [password, setPassword] = useState("")
   const [passwordConfirm, setPasswordConfirm] = useState("")
 
+
+  async function handlerSubmit(event : FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    
+    try{
+      if( email && name && nim && major && cohort && password && passwordConfirm){
+        if(password == passwordConfirm){
+          const response = await fetch("https://lomba-backend.vercel.app/auth/signup", {
+            method : "POST",
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body : JSON.stringify({
+              name,
+              email,
+              password,
+              nim,
+              major,
+              cohort,
+            })
+          })
+          if(!response.ok) throw new Error("Gagal membuat akun")
+          setIsFormHidden(true)
+        }else{
+          setError("Password dan konfirmasi password berbeda")
+        }
+      }else{
+        setError("Field tidak boleh kosong")
+      }
+    }catch(err : unknown){
+      if(err instanceof Error){
+        setError(err.message)
+      }else{
+        setError("Terjadi kesalahan, mohon coba beberapa saat lagi")
+      }
+    }
+  }
+  // JURUSAN LIST
+  useEffect(() => {
+    async function fetchMajor() {
+      try{
+        const response = await fetch("https://lomba-backend.vercel.app/major")
+        if(!response.ok) throw new Error("Failed to fetch")
+        const data = await response.json();
+        setMajorList(data.major)
+      }catch (err: unknown){
+        if (err instanceof Error){
+          setError(err.message)
+        }else{
+          setError("Terjadi kesalahan yang tidak diketahui");
+        }
+      }
+    }
+    fetchMajor()
+  }, [])
+
+
+  if (error) return <div className="">Error : {error}</div>
 
   return (
     <div className="container relative max-w-base min-h-screen flex justify-start items-start flex-col overflow-scroll pb-0">
@@ -50,10 +96,17 @@ export default function CreateAccount() {
             >
               Buat akun sekarang, ikut lomba kemudian!
             </p>
+            {error ?
+              <div className="">
+                *{error}
+              </div>
+              :
+              ""
+            }
         </div>
 
       {/* FORM */}
-      <form action="" className={`flex flex-col justify-start items-start w-full pb-8 ${isFormHidden ? 'animate-moveUpAndHide' :''}`}>
+      <form action="" method="POST" onSubmit={handlerSubmit} className={`flex flex-col justify-start items-start w-full pb-8 ${isFormHidden ? 'animate-moveUpAndHide' :''}`}>
         <div className={`coverForm flex flex-col justify-start items-start w-full gap-2 p-6 bg-[#F1F2F6] rounded-2xl pt-8 ${isFormHidden ? 'animate-moveUpAndHide' :''}`} style={{animationDelay:`950ms`}}>
           {/* EMAIL */}
           <div className="itemForm w-full flex flex-col gap-1">
@@ -86,8 +139,8 @@ export default function CreateAccount() {
               type="text" 
               name="name" 
               id="name" 
-              onChange={(e) => setNama(e.target.value)}
-              value={nama} 
+              onChange={(e) => setName(e.target.value)}
+              value={name} 
               className="p-2 w-full bg-white rounded-md font-poppinsRegular text-xs text-[#1d1d1d]" 
               placeholder="Masukkan Nama" 
               style={{outline: 'none'}}
@@ -125,8 +178,8 @@ export default function CreateAccount() {
             <select 
               name="jurusan" 
               id="jurusan" 
-              defaultValue={jurusan} 
-              onChange={(e) => setJurusan(e.target.value)}
+              defaultValue={major} 
+              onChange={(e) => setMajor(e.target.value)}
               className="p-2 w-full bg-white rounded-md font-poppinsRegular text-xs" 
               style={{outline: 'none'}}
               required
@@ -137,7 +190,7 @@ export default function CreateAccount() {
                   disabled
                   >Pilih Jurusan
                 </option>
-                {jurusanList.map((item, index) => (
+                {majorList.map((item, index) => (
                     <option 
                       value={item} 
                       key={index}
@@ -156,8 +209,8 @@ export default function CreateAccount() {
             <select 
               name="angkatan" 
               id="angkatan" 
-              defaultValue={angkatan} 
-              onChange={(e) => setAngkatan(e.target.value)}
+              defaultValue={cohort} 
+              onChange={(e) => setCohort(e.target.value)}
               className="p-2 w-full bg-white rounded-md font-poppinsRegular text-xs" 
               style={{outline: 'none'}}
               required
@@ -223,7 +276,6 @@ export default function CreateAccount() {
           </div>
           <button
             className={`bg-blueSec w-full p-2 text-white font-poppinsMedium mt-4 rounded-lg`}
-            onClick={handleFormHide} 
             type="submit"
           >
             Buat Akun
