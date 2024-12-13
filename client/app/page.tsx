@@ -128,7 +128,7 @@ export default function Home() {
 
 
   return (
-    <div className={`container relative max-w-sm min-h-screen flex justify-start items-center flex-col overflow-hidden ${isIntroHidden ? "max-h-fit" : "max-h-screen"}`}>
+    <div className={`container relative  min-h-screen flex justify-start items-center flex-col overflow-hidden ${isIntroHidden ? "max-h-fit" : "max-h-screen"}`}>
       {isLogin ? (
         <NavbarLogin
           className={`top-[100%] ${
@@ -281,14 +281,17 @@ export default function Home() {
       ) : (
         // DASHBOARD IF LOGIN
         <div
-          className={`relative z-40 min-h-screen translate-y-[100vh] ${
+          className={`relative z-40 w-full max-w-3xl min-h-screen translate-y-[100vh] ${
             isIntroHidden ? "animate-moveUpAndShow" : ""
           }`}
           style={{ animationDelay: `1550ms` }}
         >
-          <div className="flex flex-col justify-start items-start py-6 px-4 mt-20 gap-12">
-            <div className="flex flex-col w-full rounded-xl bg-bluePrimary p-6 pb-0 gap-8">
-              <div className="flex flex-col justify-start items-start gap-2">
+          <div className="flex flex-col w-full justify-start items-start py-6 px-4 mt-20 gap-12">
+            {/* SAMBUTAN */}
+            <div className="
+              flex w-full rounded-3xl bg-bluePrimary px-6 gap-0 sm:gap-8 overflow-hidden
+              flex-row justify-start items-center sm:rounded-3xl sm:pb-0 sm:max-h-64 sm:-h-full sm:py-0">
+              <div className="flex flex-col justify-start items-start gap-2 relative sm:w-full min-w-64">
                 <h1 className="text-xl font-poppinsBold text-white">
                   Halo {userData?.name}!
                 </h1>
@@ -296,12 +299,12 @@ export default function Home() {
                   Yuk temukan info lomba terbaru dan tingkatkan prestasimu!
                 </p>
               </div>
-              <div className="w-full">
+              <div className="w-full md:h-full md:w-auto sm:flex min-w-64">
                 <Image
                   src={'/imgs/dashboard-imgs/Dashboard-Main-Img.svg'}
                   alt="Image Dashboard"
                   width={1}
-                  height={1}
+                  height={3}
                   layout="responsive"
                 />
               </div>
@@ -312,9 +315,9 @@ export default function Home() {
               <p className="text-base font-poppinsSemiBold">
                 Lomba Terbaru
               </p>
-              <div className="flex flex-col p-6 justify-center items-center rounded-xl w-full min-h-64 bg-white">
-                {competitionCards.length == 0 ? (
-                  <div className="flex flex-col justify-center items-center gap-4">
+              <div className="flex flex-col justify-center items-center w-full min-h-64">
+                {competitionCards.length != 0 ? (
+                  <div className="flex flex-col justify-center items-center gap-4 rounded-xl bg-white w-full min-h-64">
                     <div className="w-12 relative">
                       <Image
                         src={'/imgs/dashboard-imgs/No-Data-White.svg'}
@@ -329,31 +332,116 @@ export default function Home() {
                     </p>
                   </div>
                 ) : (
-                  <div className="w-full flex flex-col gap-4 justify-center items-center">
+                  <div className="w-full flex sm:grid sm:grid-cols-2 lg:grid-cols-3 flex-col gap-4 justify-center sm:justify-start sm:overflow-scroll items-center">
                     {/* CARD */}
                     {competitionCards.map((card, index : number) => (
-                      <div className="card p-4 w-full rounded-lg flex flex-col gap-4 bg-[#F1F2F6]" key={index}>
-                        <div className="w-full overflow-hidden rounded-lg aspect-video">
-                          <Image
-                            src={'/imgs/dashboard-imgs/Contoh-Gambar_1.png'}
-                            alt="Image Poster"
-                            width={1}
-                            height={1}
-                            layout="responsive"
-                          />
-                        </div>
-                        <div className="detail w-full gap-2 justify-start items-start">
-                          <h2 className="text-base font-poppinsMedium">Hoho Competition</h2>
-                          <div className="flex flex-row gap-1 justify-start items-center my-2">
-                            <div className="flex justify-center items-center rounded-3xl bg-blueSec text-white font-poppinsRegular text-xs px-4 py-2">Web Design</div>
-                            <div className="flex justify-center items-center rounded-3xl bg-blueSec text-white font-poppinsRegular text-xs px-4 py-2">Tim</div>
-                            <div className="flex justify-center items-center rounded-3xl bg-blueSec text-white font-poppinsRegular text-xs px-4 py-2">21 Okt</div>
-                          </div>
-                          <p className="text-sm font-poppinsRegular text-secText">Perlombaan yang paling dinanti tahun ini! Daftarkan tim mu sekarang dan jadilah juara masa depan!</p>
-                          <Button className="text-sm">Selengkapnya</Button>
+                    <div className="card w-full rounded-xl overflow-hidden flex flex-col bg-white" key={index}>
+                      <div className="w-full relative overflow-hidden rounded-lg aspect-video">
+                        <Image
+                          src={'/imgs/dashboard-imgs/Contoh-Gambar_1.png'}
+                          alt="Image Poster"
+                          width={1}
+                          height={1}
+                          layout="responsive"
+                        />
+                        <div className="flex absolute top-2 left-2 w-full flex-row gap-1 justify-start items-center my-2">
+                          <div className="flex justify-center items-center rounded-3xl bg-blueSec text-white font-poppinsRegular text-xs px-4 py-2">Web Design</div>
+                          <div className="flex justify-center items-center rounded-3xl bg-blueSec text-white font-poppinsRegular text-xs px-4 py-2">Tim</div>
+                          <div className="flex justify-center items-center rounded-3xl bg-blueSec text-white font-poppinsRegular text-xs px-4 py-2">21 Okt</div>
                         </div>
                       </div>
+                      <div className="detail w-full px-4 py-5 gap-2 justify-start items-start">
+                        <h2 className="text-base font-poppinsMedium">Hoho Competition</h2>
+                        
+                        <p className="text-sm font-poppinsRegular text-secText">Perlombaan yang paling dinanti tahun ini! Daftarkan tim mu sekarang dan jadilah juara masa depan!</p>
+                      </div>
+                    </div>
                     ))}
+
+                    <div className="card w-full rounded-xl overflow-hidden flex flex-col bg-white" key={'1'}>
+                      <div className="w-full relative overflow-hidden rounded-lg aspect-video">
+                        <Image
+                          src={'/imgs/dashboard-imgs/Contoh-Gambar_1.png'}
+                          alt="Image Poster"
+                          width={1}
+                          height={1}
+                          layout="responsive"
+                        />
+                        <div className="flex absolute top-2 left-2 w-full flex-row gap-1 justify-start items-center my-2">
+                          <div className="flex justify-center items-center rounded-3xl bg-blueSec text-white font-poppinsRegular text-xs px-4 py-2">Web Design</div>
+                          <div className="flex justify-center items-center rounded-3xl bg-blueSec text-white font-poppinsRegular text-xs px-4 py-2">Tim</div>
+                          <div className="flex justify-center items-center rounded-3xl bg-blueSec text-white font-poppinsRegular text-xs px-4 py-2">21 Okt</div>
+                        </div>
+                      </div>
+                      <div className="detail w-full px-4 py-5 gap-2 justify-start items-start">
+                        <h2 className="text-base font-poppinsMedium">Hoho Competition</h2>
+                        
+                        <p className="text-sm font-poppinsRegular text-secText">Perlombaan yang paling dinanti tahun ini! Daftarkan tim mu sekarang dan jadilah juara masa depan!</p>
+                      </div>
+                    </div>
+                    <div className="card w-full rounded-xl overflow-hidden flex flex-col bg-white" key={'2'}>
+                      <div className="w-full relative overflow-hidden rounded-lg aspect-video">
+                        <Image
+                          src={'/imgs/dashboard-imgs/Contoh-Gambar_1.png'}
+                          alt="Image Poster"
+                          width={1}
+                          height={1}
+                          layout="responsive"
+                        />
+                        <div className="flex absolute top-2 left-2 w-full flex-row gap-1 justify-start items-center my-2">
+                          <div className="flex justify-center items-center rounded-3xl bg-blueSec text-white font-poppinsRegular text-xs px-4 py-2">Web Design</div>
+                          <div className="flex justify-center items-center rounded-3xl bg-blueSec text-white font-poppinsRegular text-xs px-4 py-2">Tim</div>
+                          <div className="flex justify-center items-center rounded-3xl bg-blueSec text-white font-poppinsRegular text-xs px-4 py-2">21 Okt</div>
+                        </div>
+                      </div>
+                      <div className="detail w-full px-4 py-5 gap-2 justify-start items-start">
+                        <h2 className="text-base font-poppinsMedium">Hoho Competition</h2>
+                        
+                        <p className="text-sm font-poppinsRegular text-secText">Perlombaan yang paling dinanti tahun ini! Daftarkan tim mu sekarang dan jadilah juara masa depan!</p>
+                      </div>
+                    </div>
+                    <div className="card w-full rounded-xl overflow-hidden flex flex-col bg-white" key={'2'}>
+                      <div className="w-full relative overflow-hidden rounded-lg aspect-video">
+                        <Image
+                          src={'/imgs/dashboard-imgs/Contoh-Gambar_1.png'}
+                          alt="Image Poster"
+                          width={1}
+                          height={1}
+                          layout="responsive"
+                        />
+                        <div className="flex absolute top-2 left-2 w-full flex-row gap-1 justify-start items-center my-2">
+                          <div className="flex justify-center items-center rounded-3xl bg-blueSec text-white font-poppinsRegular text-xs px-4 py-2">Web Design</div>
+                          <div className="flex justify-center items-center rounded-3xl bg-blueSec text-white font-poppinsRegular text-xs px-4 py-2">Tim</div>
+                          <div className="flex justify-center items-center rounded-3xl bg-blueSec text-white font-poppinsRegular text-xs px-4 py-2">21 Okt</div>
+                        </div>
+                      </div>
+                      <div className="detail w-full px-4 py-5 gap-2 justify-start items-start">
+                        <h2 className="text-base font-poppinsMedium">Hoho Competition</h2>
+                        
+                        <p className="text-sm font-poppinsRegular text-secText">Perlombaan yang paling dinanti tahun ini! Daftarkan tim mu sekarang dan jadilah juara masa depan!</p>
+                      </div>
+                    </div>
+                    <div className="card w-full rounded-xl overflow-hidden flex flex-col bg-white" key={'2'}>
+                      <div className="w-full relative overflow-hidden rounded-lg aspect-video">
+                        <Image
+                          src={'/imgs/dashboard-imgs/Contoh-Gambar_1.png'}
+                          alt="Image Poster"
+                          width={1}
+                          height={1}
+                          layout="responsive"
+                        />
+                        <div className="flex absolute top-2 left-2 w-full flex-row gap-1 justify-start items-center my-2">
+                          <div className="flex justify-center items-center rounded-3xl bg-blueSec text-white font-poppinsRegular text-xs px-4 py-2">Web Design</div>
+                          <div className="flex justify-center items-center rounded-3xl bg-blueSec text-white font-poppinsRegular text-xs px-4 py-2">Tim</div>
+                          <div className="flex justify-center items-center rounded-3xl bg-blueSec text-white font-poppinsRegular text-xs px-4 py-2">21 Okt</div>
+                        </div>
+                      </div>
+                      <div className="detail w-full px-4 py-5 gap-2 justify-start items-start">
+                        <h2 className="text-base font-poppinsMedium">Hoho Competition</h2>
+                        
+                        <p className="text-sm font-poppinsRegular text-secText">Perlombaan yang paling dinanti tahun ini! Daftarkan tim mu sekarang dan jadilah juara masa depan!</p>
+                      </div>
+                    </div>
                     {/* CARD */}
                     <Link href={'/lomba'} className="text-base underline font-poppinsMedium text-normalText my-1">Lihat Semua</Link>
                   </div>
@@ -368,9 +456,9 @@ export default function Home() {
                 Tim Dibutuhkan
               </p>
 
-              <div className="flex flex-col p-6 justify-center items-center rounded-xl w-full min-h-64 bg-white">
-                {teamCards.length == 0 ? (
-                  <div className="flex flex-col justify-center items-center gap-4">
+              <div className="flex flex-col justify-center items-center w-full">
+                {teamCards.length != 0 ? (
+                  <div className="flex flex-col justify-center items-center gap-4 w-full rounded-xl min-h-64 bg-white">
                     <div className="w-12 relative">
                       <Image
                         src={'/imgs/dashboard-imgs/No-Data-White.svg'}
@@ -388,7 +476,7 @@ export default function Home() {
                 ) : (
                   <div className="w-full flex flex-col gap-4 justify-center items-center">
                     {/* CARD */}
-                    <div className="card w-full rounded-lg p-4 flex flex-col gap-3 bg-[#F1F2F6]">
+                    <div className="card w-full rounded-lg px-4 py-6 rounded-xl flex flex-col gap-3 bg-white">
                       <div className="flex flex-row justify-between items-center">
                         <h2 className="text-base font-poppinsMedium">
                           Tim Maba Gacor
@@ -446,7 +534,7 @@ export default function Home() {
                             <p className="font-poppinsRegular text-xs text-normalText opacity-40"></p>
                           </div>
                         </div>
-                        <Button className="text-sm">Selengkapnya</Button>
+                        <Button className="text-sm">Detail</Button>
                       </div>
                     </div>
                     {/* CARD */}
