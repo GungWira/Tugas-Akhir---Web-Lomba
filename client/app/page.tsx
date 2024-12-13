@@ -24,8 +24,14 @@ export default function Home() {
   const [nim, setNim] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null)
+  const [userData, setUserData] = useState<
+                                          {
+                                            name : string
 
-  async function onSubmit(event : FormEvent<HTMLFormElement>){
+                                          } | null                                     
+                                          >(null);
+
+  async function onLogin(event : FormEvent<HTMLFormElement>){
     event.preventDefault()
 
     try{
@@ -38,10 +44,13 @@ export default function Home() {
           body : JSON.stringify({
             nim : nim,
             password : password,
-          })
+          }),
+          credentials : 'include',
         })
     
         if(!response.ok) throw new Error("Failed to fetch")
+        const data = await response.json()
+        setUserData(data.user)
         setIsLogin(true)
       }else {
         setError("Field tidak boleh kosong")
@@ -55,6 +64,7 @@ export default function Home() {
     }
   }
 
+  // CHECK IS USER LOGIN
   useEffect(() => {
     const checkLogin = async () => {
       try{
@@ -66,11 +76,8 @@ export default function Home() {
           credentials: 'include',
         });
         const data = await response.json()
-        if(data.ok){
-          setIsLogin(true)
-        }else{
-          setIsLogin(false)
-        }
+        setUserData(data.user.user)
+        setIsLogin(data.loggedIn)
       }catch(err :unknown){
         console.log('Error verifying login :', err)
       }
@@ -78,6 +85,7 @@ export default function Home() {
     checkLogin()
   }, [])
 
+  // IF USER LOGGEDIN, FETCH DATA FOR USER
   useEffect(() => {
     if(isLogin) {
       const fetchData = async () => {
@@ -186,7 +194,7 @@ export default function Home() {
         <form
           action=""
           method="POST"
-          onSubmit={onSubmit}
+          onSubmit={onLogin}
           className={`z-0 absolute min-h-screen left-0 opacity-0 flex flex-col justify-start items-start w-full py-6 ${
             isIntroHidden ? "animate-moveUpAndShow" : ""
           }`}
@@ -282,7 +290,7 @@ export default function Home() {
             <div className="flex flex-col w-full rounded-xl bg-bluePrimary p-6 pb-0 gap-8">
               <div className="flex flex-col justify-start items-start gap-2">
                 <h1 className="text-xl font-poppinsBold text-white">
-                  Halo Sutha!
+                  Halo {userData?.name}!
                 </h1>
                 <p className="text-sm font-poppinsRegular text-white opacity-70">
                   Yuk temukan info lomba terbaru dan tingkatkan prestasimu!

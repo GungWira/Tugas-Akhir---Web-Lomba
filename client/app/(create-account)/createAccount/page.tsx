@@ -6,7 +6,7 @@ import Navbar from "@/components/Navbar";
 
 export default function CreateAccount() {
   const [isFormHidden, setIsFormHidden] = useState(false)
-  const [majorList, setMajorList] = useState([])
+  const [majorList, setMajorList] = useState<[{major : string, id : string}] | []>([])
   const [error, setError] = useState<string | null>(null)
 
   // ANGKATAN
@@ -65,7 +65,7 @@ export default function CreateAccount() {
         const response = await fetch("https://lomba-backend.vercel.app/major")
         if(!response.ok) throw new Error("Failed to fetch")
         const data = await response.json();
-        setMajorList(data.major)
+        setMajorList(data)
       }catch (err: unknown){
         if (err instanceof Error){
           setError(err.message)
@@ -192,9 +192,9 @@ export default function CreateAccount() {
                 </option>
                 {majorList.map((item, index) => (
                     <option 
-                      value={item} 
+                      value={item.major} 
                       key={index}
-                      >{item}
+                      >{item.major}
                     </option>
                 ))}
             </select>
