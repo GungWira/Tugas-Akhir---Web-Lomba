@@ -400,7 +400,7 @@ export default function Home() {
                         <p className="text-sm font-poppinsRegular text-secText">Perlombaan yang paling dinanti tahun ini! Daftarkan tim mu sekarang dan jadilah juara masa depan!</p>
                       </div>
                     </div>
-                    <div className="card w-full rounded-xl overflow-hidden flex flex-col bg-white" key={'2'}>
+                    <div className="card w-full rounded-xl overflow-hidden flex flex-col bg-white" key={'4'}>
                       <div className="w-full relative overflow-hidden rounded-lg aspect-video">
                         <Image
                           src={'/imgs/dashboard-imgs/Contoh-Gambar_1.png'}
@@ -421,7 +421,7 @@ export default function Home() {
                         <p className="text-sm font-poppinsRegular text-secText">Perlombaan yang paling dinanti tahun ini! Daftarkan tim mu sekarang dan jadilah juara masa depan!</p>
                       </div>
                     </div>
-                    <div className="card w-full rounded-xl overflow-hidden flex flex-col bg-white" key={'2'}>
+                    <div className="card w-full rounded-xl overflow-hidden flex flex-col bg-white" key={'3'}>
                       <div className="w-full relative overflow-hidden rounded-lg aspect-video">
                         <Image
                           src={'/imgs/dashboard-imgs/Contoh-Gambar_1.png'}
@@ -476,7 +476,7 @@ export default function Home() {
                 ) : (
                   <div className="w-full flex flex-col gap-4 justify-center items-center">
                     {/* CARD */}
-                    <div className="card w-full rounded-lg px-4 py-6 rounded-xl flex flex-col gap-3 bg-white">
+                    <div className="card w-full rounded-lg px-4 py-6 sm:rounded-xl flex flex-col gap-3 bg-white">
                       <div className="flex flex-row justify-between items-center">
                         <h2 className="text-base font-poppinsMedium">
                           Tim Maba Gacor
