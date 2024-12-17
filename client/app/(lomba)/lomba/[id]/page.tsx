@@ -1,22 +1,73 @@
+"use client"
+
 import Button from "@/components/Button";
 import NavbarLogin from "@/components/NavbarLogin";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
-export default async function DetailLomba({
+interface Card {
+    id: string;
+    title: string;
+    imgUrl: string;
+    link: string;
+    category: string;
+    type: string;
+    date: string;
+    description: string;
+  }
+
+export default function DetailLomba({
     params,
   }: {
     params: Promise<{ id: string }>
   }) {
+    const router = useRouter()
+    const [card, setCard] = useState<Card | null>(null)
+    const [error, setError] = useState<string | null>(null)
+    const [slug, setSlug] = useState<string | null>(null)
 
-    const slug = (await params).id
+    useEffect(() => {
+        const getSlug = async () => {
+            const data = (await params).id
+            setSlug(data)
+        }
+        getSlug()
+    }, [params])
 
+    useEffect(() => {
+        const fetchDataCard = async () => {
+            try {
+                const response = await fetch(`https://lomba-backend.vercel.app/competition/${slug}`, {
+                    method : "GET",
+                    credentials : "include"
+                })
+                if(!response.ok) throw new Error("Gagal memuat data")
+                const data = await response.json()
+                setCard(data)
+            } catch (err : unknown) {
+                if(err instanceof Error){
+                    setError(err.message)
+                }else{
+                    setError("Gagal memuat data, mohon coba beberapa saat lagi")
+                }
+            }
+        }
+        fetchDataCard()
+    }, [slug])
+
+    const handleReimburese = () => {
+        router.push(`/lomba/${card?.id}/reimburese`)
+    }
+
+    // if(error) return(router.push("/lomba"))
 
     return (
         <div className="relative flex flex-col min-h-[100vh] justify-start items-start w-full px-4">
             <NavbarLogin></NavbarLogin>
             
-            <div className="flex flex-col justify-start items-start p-4 gap-2 mt-24 w-full">
+            <div className="flex flex-col justify-start items-start py-4 gap-2 mt-24 w-full">
                 <div className="bg-white w-full rounded-md px-4 py-6 flex flex-col justify-start items-start gap-2">
                     <h1 className="text-normalText font-poppinsBold text-lg">
                         {slug}
@@ -74,7 +125,7 @@ export default async function DetailLomba({
                         </Link>
                     </div>
                     <div className="flex flex-col justify-start items-start w-full">
-                        <Button>Ajukan Reimburse</Button>
+                        <Button onClick={handleReimburese}>Ajukan Reimburse</Button>
                         <Button 
                             className="bg-[#F1F2F6] text-normalText"
                             style={{backgroundColor: `#F1F2F6`, color: `#767676`}}

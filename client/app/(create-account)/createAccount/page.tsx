@@ -1,10 +1,12 @@
 'use client';
 
+import { useRouter } from 'next/navigation'
 import { useState, useEffect, FormEvent } from "react";
 import Link from 'next/link';
 import Navbar from "@/components/Navbar";
 
 export default function CreateAccount() {
+  const router = useRouter()
   const [isFormHidden, setIsFormHidden] = useState(false)
   const [majorList, setMajorList] = useState<[{major : string, id : string}] | []>([])
   const [error, setError] = useState<string | null>(null)
@@ -20,6 +22,7 @@ export default function CreateAccount() {
   const [cohort, setCohort] = useState("")
   const [password, setPassword] = useState("")
   const [passwordConfirm, setPasswordConfirm] = useState("")
+  const [isTermsAccepted, setIsTermsAccepted] = useState(false);
 
 
   async function handlerSubmit(event : FormEvent<HTMLFormElement>) {
@@ -27,25 +30,36 @@ export default function CreateAccount() {
     
     try{
       if( email && name && nim && major && cohort && password && passwordConfirm){
-        if(password == passwordConfirm){
-          const response = await fetch("https://lomba-backend.vercel.app/auth/signup", {
-            method : "POST",
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body : JSON.stringify({
-              name,
-              email,
-              password,
-              nim,
-              major,
-              cohort,
+        if (isTermsAccepted) {
+          if(password == passwordConfirm){
+            const response = await fetch("https://lomba-backend.vercel.app/auth/signup", {
+              method : "POST",
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body : JSON.stringify({
+                name,
+                email,
+                password,
+                cohort,
+                nim,
+                major,
+              }),
+              credentials : 'include'
             })
-          })
-          if(!response.ok) throw new Error("Gagal membuat akun")
-          setIsFormHidden(true)
+            if(!response.ok){
+              throw new Error("Gagal membuat akun")
+            }else{
+              localStorage.setItem("nim", btoa(nim))
+              setIsFormHidden(true)
+              router.push("/otp")
+            }
+          }else{
+            setError("Password dan konfirmasi password berbeda")
+          }
         }else{
-          setError("Password dan konfirmasi password berbeda")
+          setError("Anda harus menyetujui persyaratan layanan & kebijakan privasi");
+          return;
         }
       }else{
         setError("Field tidak boleh kosong")
@@ -77,9 +91,6 @@ export default function CreateAccount() {
     fetchMajor()
   }, [])
 
-
-  if (error) return <div className="">Error : {error}</div>
-
   return (
     <div className="container relative max-w-base min-h-screen flex justify-start items-start flex-col overflow-scroll pb-0">
       <Navbar></Navbar>
@@ -97,7 +108,7 @@ export default function CreateAccount() {
               Buat akun sekarang, ikut lomba kemudian!
             </p>
             {error ?
-              <div className="">
+              <div className="text-sm text-normalText mb-4 font-poppinsRegular text-red-500">
                 *{error}
               </div>
               :
@@ -178,7 +189,7 @@ export default function CreateAccount() {
             <select 
               name="jurusan" 
               id="jurusan" 
-              defaultValue={major} 
+              value={major} 
               onChange={(e) => setMajor(e.target.value)}
               className="p-2 w-full bg-white rounded-md font-poppinsRegular text-xs" 
               style={{outline: 'none'}}
@@ -271,7 +282,13 @@ export default function CreateAccount() {
             />
           </div>
           <div className="flex w-full gap-1 justify-start items-center mt-2">
-            <input type="checkbox" name="syarat" id="syarat" />
+            <input 
+              type="checkbox" 
+              name="syarat" 
+              id="syarat" 
+              checked={isTermsAccepted}
+              onChange={(e) => setIsTermsAccepted(e.target.checked)}
+            />
             <label htmlFor="syarat" className="text-black opacity-80 font-poppinsRegular text-xs">Persyaratan layanan & kebijakan Privasi.</label>
           </div>
           <button

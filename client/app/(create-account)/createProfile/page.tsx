@@ -1,138 +1,195 @@
-"use client"
+"use client";
 
-import NavbarBack from "@/components/NavbarBack"
-import Button from "@/components/Button"
-import { useState } from "react"
-
+import NavbarBack from "@/components/NavbarBack";
+import Button from "@/components/Button";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 export default function CreateProfile() {
-    const [selectedImage, setSelectedImage] = useState<string | null>(null)
-    const [frontName, setFrontName] = useState<string>('')
-    const [lastName, setLastName] = useState<string>('')
-    const [gender, setGender] = useState<string>('')
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [firstName, setFirstName] = useState<string>("");
+  const [lastName, setLastName] = useState<string>("");
+  const [gender, setGender] = useState<string>("");
+  const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
-    const handleImageUpload = (event : React.ChangeEvent<HTMLInputElement>) => {
-        if(event.target.files && event.target.files[0]){
-            const file = event.target.files[0]
-            const reader = new FileReader()
+  useEffect(() => {
+    const nim = localStorage.getItem("nim");
+    const token = localStorage.getItem("token");
+    
+    if (!nim || !token ) {
+      router.push("/");
+    }else{
+      const decodedToken = atob(token)
+      if(!decodedToken.includes("LolosOtpSAW")){
+        router.push("/");
+      }
+    }
+  }, [router]);
 
-            reader.onload = () => {
-                if (reader.result){
-                    setSelectedImage(reader.result as string)
-                }
-            }
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
+      const file = event.target.files[0];
 
-            reader.readAsDataURL(file)
-        }
+      if (!file.type.startsWith("image/")) {
+        setError("File yang diunggah harus berupa gambar.");
+        return;
+      }
+      console.log(file)
+      setSelectedImage(file);
+      setError(null);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!selectedImage || !firstName || !lastName || !gender) {
+      setError("Semua field harus diisi dengan benar.");
+      return;
     }
 
-    const isFormValid = frontName && lastName && gender
-    
-    return (
-        <div className="relative flex flex-col h-screen w-screen overflow-hidden">
-            <NavbarBack href={'/otp'}></NavbarBack>
-            {/* FORM */}
-            <form action="" className="w-full flex flex-col px-6 py-8 pt-32 justify-between items-center h-screen">
-                <div className="flex flex-col justify-center items-center gap-6">
-                    <div className="relative">
-                        <img 
-                            src={selectedImage || `imgs/create-account-imgs/default-img.svg`} 
-                            alt="img profile preview" 
-                            className="w-40 h-40 object-cover border rounded-full"
-                        />
-                        <input 
-                            type="file" 
-                            accept="image/*"
-                            onChange={handleImageUpload}
-                            name="img" 
-                            id="img" 
-                            className="absolute top-0 left-0 h-full opacity-0 cursor-pointer"
-                        />
-                        <img 
-                            src="imgs/create-account-imgs/img.svg" 
-                            alt="img icon" 
-                            className="absolute bottom-0 right-0 w-[48px]"
-                        />
-                    </div>
-                    <div className="flex flex-col justify-center items-center gap-2">
-                        <h1 className="text-xl font-poppinsSemiBold text-blueSec text-center">User Profile</h1>
-                        <p className="text-sm font-poppinsRegular text-normalText text-center">Atur profil dan preferensi Anda untuk pengalaman yang lebih personal.</p>
-                    </div>
-                    <div className="flex flex-col justify-start items-start w-full gap-3">
-                        <input 
-                            type="text" 
-                            name="firstName" 
-                            id="firstName"
-                            value={frontName} 
-                            onChange={(e) => setFrontName(e.target.value)}
-                            className="w-full bg-white p-3 rounded-lg pl-10 text-sm font-poppinsRegular text-normalText"
-                            placeholder="Nama Depan"
-                            style={
-                                {
-                                    backgroundImage: "url('/imgs/create-account-imgs/icon-front-last-name.svg')",
-                                    backgroundSize: "16px",
-                                    backgroundRepeat : "no-repeat",
-                                    backgroundPositionY: "center",
-                                    backgroundPositionX : "12px",
-                                    outlineColor: "#1DCAD3"
-                                }
-                            }
-                        />
-                        <input 
-                            type="text" 
-                            name="lastName" 
-                            id="lastName"
-                            value={lastName} 
-                            onChange={(e) => setLastName(e.target.value)}
-                            className="w-full bg-white p-3 rounded-lg pl-10 text-sm font-poppinsRegular text-normalText"
-                            placeholder="Nama Belakang"
-                            style={
-                                {
-                                    backgroundImage: "url('/imgs/create-account-imgs/icon-front-last-name.svg')",
-                                    backgroundSize: "16px",
-                                    backgroundRepeat : "no-repeat",
-                                    backgroundPositionY: "center",
-                                    backgroundPositionX : "12px",
-                                    outlineColor: "#1DCAD3"
-                                }
-                            }
-                        />
-                        <select 
-                            name="gender" 
-                            id="gender"
-                            value={gender} 
-                            onChange={(e) => setGender(e.target.value)}
-                            className="w-full bg-white p-3 rounded-lg pl-10 text-sm font-poppinsRegular text-normalText"
-                            style={
-                                {
-                                    backgroundImage: "url('/imgs/create-account-imgs/icon-gender.svg')",
-                                    backgroundSize: "20px",
-                                    backgroundRepeat : "no-repeat",
-                                    backgroundPositionY: "center",
-                                    backgroundPositionX : "12px",
-                                    outlineColor: "#1DCAD3"
-                                }
-                            }
-                        >
-                            <option value="" disabled>
-                                Gender
-                            </option>
-                            <option value="Pria">
-                                Pria
-                            </option>
-                            <option value="Wanita">
-                                Wanita
-                            </option>
-                        </select>
-                    </div>
-                </div>
-                <Button 
-                    className={`${!isFormValid ? 'bg-[#CBCBCB]' : 'bg-blueSec'}`}
-                    isDisabled={!isFormValid}
-                >
-                    Selesai
-                </Button>
-            </form>
+    const nim = localStorage.getItem("nim");
+
+    if (!nim) {
+      router.push("/");
+      return;
+    }
+
+    try {
+    // Membuat FormData untuk mengirim data
+    const decodedNim = atob(nim);
+    const formData = new FormData();
+
+    // Menambahkan key profile (file) dengan content type otomatis
+    formData.append("profile", selectedImage);
+
+    // Menambahkan data text secara manual dengan text/plain
+    formData.append("nim", decodedNim);
+    formData.append("firstName", firstName);
+    formData.append("lastName", lastName);
+    formData.append("gender", gender);
+
+    console.log(formData.get("profile"))
+    console.log(formData.get("nim"))
+    console.log(formData.get("firstName"))
+    console.log(formData.get("lastName"))
+    console.log(formData.get("gender"))
+
+    // Mengirim request ke API menggunakan fetch
+    const response = await fetch("https://lomba-backend.vercel.app/auth/image-profile", {
+      method: "POST",
+      body: formData,
+      credentials : 'include'
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to upload image profile");
+    }
+
+    const result = await response.json();
+    console.log("Profil berhasil diunggah:", result);
+
+    localStorage.removeItem("nim");
+    localStorage.removeItem("token");
+    localStorage.setItem("logedin", "true");
+    router.push("/");
+
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Terjadi kesalahan.");
+    }
+  };
+
+  const isFormValid = firstName && lastName && gender && selectedImage;
+
+  return (
+    <div className="relative flex flex-col h-screen w-screen overflow-hidden">
+      <NavbarBack href={'/otp'}></NavbarBack>
+      <form
+        onSubmit={handleSubmit}
+        className="w-full flex flex-col px-6 py-8 pt-32 justify-between items-center h-screen"
+      >
+        <div className="flex flex-col justify-center items-center gap-6">
+          <div className="relative">
+            <div className="w-40 h-40 object-cover border rounded-full overflow-hidden">
+                <Image
+                    src={selectedImage
+                        ? URL.createObjectURL(selectedImage)
+                        : `imgs/create-account-imgs/default-img.svg`}
+                    alt="Image Profile Preview"
+                    width={1}
+                    height={1}
+                    layout="responsive"
+                />
+            </div>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageUpload}
+              name="img"
+              id="img"
+              className="absolute top-0 left-0 h-full opacity-0 cursor-pointer"
+            />
+            <div className="absolute bottom-0 right-0 w-[48px] overflow-hidden">
+                <Image
+                    src={`imgs/create-account-imgs/img.svg`}
+                    alt="Image Profile Preview Icon"
+                    width={1}
+                    height={1}
+                    layout="responsive"
+                />
+            </div>
+          </div>
+          <div className="flex flex-col justify-center items-center gap-2">
+            <h1 className="text-xl font-poppinsSemiBold text-blueSec text-center">User Profile</h1>
+            <p className="text-sm font-poppinsRegular text-normalText text-center">
+              Atur profil dan preferensi Anda untuk pengalaman yang lebih personal.
+            </p>
+            {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+          </div>
+          <div className="flex flex-col justify-start items-start w-full gap-3">
+            <input
+              type="text"
+              name="firstName"
+              id="firstName"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              className="w-full bg-white p-3 rounded-lg pl-10 text-sm font-poppinsRegular text-normalText"
+              placeholder="Nama Depan"
+            />
+            <input
+              type="text"
+              name="lastName"
+              id="lastName"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              className="w-full bg-white p-3 rounded-lg pl-10 text-sm font-poppinsRegular text-normalText"
+              placeholder="Nama Belakang"
+            />
+            <select
+              name="gender"
+              id="gender"
+              value={gender}
+              onChange={(e) => setGender(e.target.value)}
+              className="w-full bg-white p-3 rounded-lg pl-10 text-sm font-poppinsRegular text-normalText"
+            >
+              <option value="" disabled>
+                Gender
+              </option>
+              <option value="Pria">Pria</option>
+              <option value="Wanita">Wanita</option>
+            </select>
+          </div>
         </div>
-    )
+        <Button
+          type="submit"
+          className={`${!isFormValid ? "bg-[#CBCBCB]" : "bg-blueSec"}`}
+          isDisabled={!isFormValid}
+        >
+          Selesai
+        </Button>
+      </form>
+    </div>
+  );
 }
