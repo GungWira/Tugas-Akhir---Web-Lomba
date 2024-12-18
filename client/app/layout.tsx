@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import { UserProvider } from "@/contexts/UserContext";
 
 
 const poppinsRegular = localFont({
@@ -44,7 +45,9 @@ export default function RootLayout({
            ${poppinsBold.variable} 
            antialiased`}
       >
-        {children}
+        <UserProvider>
+          {children}
+        </UserProvider>
       </body>
     </html>
   );

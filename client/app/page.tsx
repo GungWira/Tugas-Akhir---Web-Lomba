@@ -8,9 +8,23 @@ import { FormEvent, useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useUser } from "@/contexts/UserContext";
+
+interface Card {
+  id: string;
+  title: string;
+  imgUrl: string;
+  link: string;
+  category: string;
+  type: string;
+  date: string;
+  description: string;
+}
 
 export default function Home() {
   const router = useRouter()
+  const user = useUser()
+  const { login } = useUser()
   // ANIMATION
   const [isIntroHidden, setIsIntroHidden] = useState(false);
   const [isLogin, setIsLogin] = useState(false);
@@ -26,35 +40,19 @@ export default function Home() {
   const [nim, setNim] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null)
-  const [userData, setUserData] = useState<
-                                          {
-                                            name : string
-                                            profile : string
-                                          } | null                                     
-                                          >(null);
 
   async function onLogin(event : FormEvent<HTMLFormElement>){
     event.preventDefault()
+    setError('')
 
     try{
       if( nim && password ){
-        const response = await fetch('https://lomba-backend.vercel.app/auth/login', {
-          method : 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body : JSON.stringify({
-            nim : nim,
-            password : password,
-          }),
-          credentials : 'include',
-        })
-    
-        if(!response.ok) throw new Error("Failed to fetch")
-        const data = await response.json()
-        localStorage.setItem("logedin", "true")
-        setUserData(data.user)
-        setIsLogin(true)
+        await login({nim,password})
+        if(!user.isLogin){
+          setError("NIM atau password salah")
+        }else{
+          setIsIntroHidden(true)
+        }
       }else {
         setError("Field tidak boleh kosong")
       }
@@ -71,25 +69,18 @@ export default function Home() {
   useEffect(() => {
     const checkLogin = async () => {
       try{
-        const response = await fetch('https://lomba-backend.vercel.app/auth/verify', {
-          method: 'GET', 
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          credentials: 'include',
-        });
-        const data = await response.json()
-        setUserData(data.user.user)
-        setIsLogin(data.loggedIn)
-        if(localStorage.getItem("logedin") == "true"){
-          setIsIntroHidden(true)
+        if(user){
+          setIsLogin(user.isLogin)
+          if(user.isLogin){
+            setIsIntroHidden(true)
+          }
         }
       }catch(err :unknown){
         console.log('Error verifying login :', err)
       }
     }
     checkLogin()
-  }, [])
+  }, [user])
 
   // IF USER LOGGEDIN, FETCH DATA FOR USER
   useEffect(() => {
@@ -138,13 +129,14 @@ export default function Home() {
   return (
     <div className={`container relative  min-h-screen flex justify-start items-center flex-col overflow-hidden ${isIntroHidden ? "max-h-fit" : "max-h-screen"}`}>
       {isLogin ? (
+
         <NavbarLogin
           className={`top-[100%] ${
             isIntroHidden ? "animate-animateNavDown" : ""
           }`}
           style={{ animationDelay: `1350ms` }}
-          imageUrl={userData?.profile}
         ></NavbarLogin>
+
       ) : (
         <div className="hidden"></div>
       )}
@@ -302,7 +294,7 @@ export default function Home() {
               flex-row justify-start items-center sm:rounded-3xl sm:pb-0 sm:max-h-64 sm:-h-full sm:py-0">
               <div className="flex flex-col justify-start items-start gap-2 relative sm:w-full min-w-64">
                 <h1 className="text-xl font-poppinsBold text-white">
-                  Halo {userData?.name}!
+                  Halo {user.user?.name}!
                 </h1>
                 <p className="text-sm font-poppinsRegular text-white opacity-70">
                   Yuk temukan info lomba terbaru dan tingkatkan prestasimu!
@@ -343,7 +335,7 @@ export default function Home() {
                 ) : (
                   <div className="w-full flex sm:grid sm:grid-cols-2 lg:grid-cols-3 flex-col gap-4 justify-center sm:justify-start sm:overflow-scroll items-center">
                     {/* CARD */}
-                    {competitionCards.map((card, index : number) => (
+                    {competitionCards.map((card : Card, index : number) => (
                     <div 
                       className="card w-full rounded-xl overflow-hidden flex flex-col bg-white" 
                       key={index} 

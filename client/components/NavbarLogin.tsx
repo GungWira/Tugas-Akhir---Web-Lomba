@@ -1,17 +1,19 @@
-import Image from "next/image";
+"use client"
+
 import React from "react";
+import { useUser } from "@/contexts/UserContext";
+import Image from "next/image";
 
 type NavbarLoginProps = {
   className?: string;
   style? : React.CSSProperties;
-  imageUrl? : string;
 };
 
 const NavbarLogin: React.FC<NavbarLoginProps> = ({
   className = "",
   style,
-  imageUrl
 }) => {
+  const { user } = useUser()
   return (
     <div 
       className={`w-full px-6 py-4 flex flex-row top-0 left-0 justify-between items-center bg-bluePrimary fixed z-50 gap-2 ${className}`} 
@@ -35,7 +37,7 @@ const NavbarLogin: React.FC<NavbarLoginProps> = ({
         </div>
         <button typeof="button" className="w-12 h-12 bg-transparent border-white rounded-lg overflow-hidden">
           <Image
-            src={imageUrl || '/imgs/dashboard-imgs/Default-Profile-Img.svg'}
+            src={user?.imageUrl || '/imgs/dashboard-imgs/Default-Profile-Img.svg'}
             alt="User Profile Image"
             width={1}
             height={1}

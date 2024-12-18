@@ -36,7 +36,6 @@ export default function CreateProfile() {
         setError("File yang diunggah harus berupa gambar.");
         return;
       }
-      console.log(file)
       setSelectedImage(file);
       setError(null);
     }
@@ -71,12 +70,6 @@ export default function CreateProfile() {
     formData.append("lastName", lastName);
     formData.append("gender", gender);
 
-    console.log(formData.get("profile"))
-    console.log(formData.get("nim"))
-    console.log(formData.get("firstName"))
-    console.log(formData.get("lastName"))
-    console.log(formData.get("gender"))
-
     // Mengirim request ke API menggunakan fetch
     const response = await fetch("https://lomba-backend.vercel.app/auth/image-profile", {
       method: "POST",
@@ -89,7 +82,7 @@ export default function CreateProfile() {
     }
 
     const result = await response.json();
-    console.log("Profil berhasil diunggah:", result);
+    if(!result.success) throw new Error("Failed to update profile")
 
     localStorage.removeItem("nim");
     localStorage.removeItem("token");
