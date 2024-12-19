@@ -12,7 +12,7 @@ export async function fetchUser() {
       return {
         id : data.user.user.id || null,
         name: data.user.user.lastName || "Guest User",
-        nim : data.user.user.student_id || null,
+        nim : data.user.user.student_id || "0000000000",
         imageUrl: data.user.user.profile || "/imgs/dashboard-imgs/Default-Profile-Img.svg",
         isLogin : data.loggedIn,
       };
@@ -21,6 +21,7 @@ export async function fetchUser() {
       return { 
         name: "Guest User", 
         imageUrl: "/imgs/dashboard-imgs/Default-Profile-Img.svg" ,
+        nim : "0000000000",
         isLogin : false,
         };
     }

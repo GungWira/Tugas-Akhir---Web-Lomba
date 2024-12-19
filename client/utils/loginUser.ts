@@ -14,7 +14,7 @@ export async function loginUser(data : {nim : string, password : string}){
       return{
         id : userdata.user.id || null,
         name: userdata.user.lastName || "Guest User",
-        nim : userdata.user.student_id || null,
+        nim : userdata.user.student_id || "0000000000",
         imageUrl: userdata.user.profile || "/imgs/dashboard-imgs/Default-Profile-Img.svg",
         isLogin : true,
       }
@@ -23,6 +23,7 @@ export async function loginUser(data : {nim : string, password : string}){
       return { 
         name: "Guest User", 
         imageUrl: "/imgs/dashboard-imgs/Default-Profile-Img.svg" ,
+        nim: "0000000000",
         isLogin : false,
         };
     }

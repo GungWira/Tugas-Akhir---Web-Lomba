@@ -3,7 +3,7 @@ import NavbarLogin from "@/components/NavbarLogin";
 import Image from "next/image";
 import Link from "next/link";
 
-export default async function DetailLomba({
+export default async function DetailTim({
     params,
   }: {
     params: Promise<{ idTeam: string }>
@@ -11,6 +11,18 @@ export default async function DetailLomba({
 
     const slug = (await params).idTeam
 
+    const response = await fetch(`https://lomba-backend.vercel.app/competition/${slug}`, {
+        method : "GET",
+        headers : {
+            "Content-Type" : "application/json"
+        },
+        credentials : "include",
+    })
+    if(!response.ok){
+        throw new Error("Gagal mengambil data lomba")  
+    } 
+    const data = await response.json()
+    console.log(data)
 
     return (
         <div className="relative flex flex-col min-h-[100vh] justify-start items-start w-full px-4">
@@ -19,7 +31,7 @@ export default async function DetailLomba({
             <div className="flex flex-col justify-start items-start p-4 gap-2 mt-24 w-full">
                 <div className="bg-white w-full rounded-md px-4 py-6 flex flex-col justify-start items-start gap-2">
                     <h1 className="text-normalText font-poppinsBold text-lg">
-                        {slug}
+                        {data.title}
                     </h1>
                     
                     <div className="w-full overflow-hidden rounded-lg aspect-video">

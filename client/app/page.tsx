@@ -13,12 +13,12 @@ import { useUser } from "@/contexts/UserContext";
 interface Card {
   id: string;
   title: string;
-  imgUrl: string;
-  link: string;
+  imagePoster: string;
   category: string;
   type: string;
   date: string;
   description: string;
+  endDate : Date;
 }
 
 export default function Home() {
@@ -87,7 +87,7 @@ export default function Home() {
     if(isLogin) {
       const fetchData = async () => {
         try {
-          const responseCompetition = await fetch('https://lomba-backend.vercel.app/auth/competition', {
+          const responseCompetition = await fetch('https://lomba-backend.vercel.app/competition', {
             method : 'GET',
             credentials : 'include'
           })
@@ -121,6 +121,15 @@ export default function Home() {
       fetchData()
     }
   }, [isLogin])
+
+  const handleDate = (date : Date) =>{
+    const newDate = new Date(date)
+    const validDate = newDate.toLocaleDateString("id-ID", {
+      day : "numeric",
+      month : "long"
+    })
+    return validDate
+  }
   
   const handleLomba = (id : string) => {
     router.push(`/lomba/${id}`)
@@ -317,7 +326,7 @@ export default function Home() {
                 Lomba Terbaru
               </p>
               <div className="flex flex-col justify-center items-center w-full min-h-64">
-                {competitionCards.length != 0 ? (
+                {competitionCards.length == 0 ? (
                   <div className="flex flex-col justify-center items-center gap-4 rounded-xl bg-white w-full min-h-64">
                     <div className="w-12 relative">
                       <Image
@@ -342,42 +351,17 @@ export default function Home() {
                       onClick={() => {handleLomba(card.id)}}>
                       <div className="w-full relative overflow-hidden rounded-lg aspect-video">
                         <Image
-                          src={'/imgs/dashboard-imgs/Contoh-Gambar_1.png'}
+                          src={card.imagePoster}
                           alt="Image Poster"
                           width={1}
                           height={1}
                           layout="responsive"
                         />
                         <div className="flex absolute top-2 left-2 w-full flex-row gap-1 justify-start items-center my-2">
-                          <div className="flex justify-center items-center rounded-3xl bg-white text-normalText font-poppinsRegular text-xs px-4 py-2">Web Design</div>
-                          <div className="flex justify-center items-center rounded-3xl bg-white text-normalText font-poppinsRegular text-xs px-4 py-2">Tim</div>
-                          <div className="flex justify-center items-center rounded-3xl bg-white text-normalText font-poppinsRegular text-xs px-4 py-2">21 Okt</div>
-                        </div>
-                      </div>
-                      <div className="detail w-full px-4 py-5 gap-2 justify-start items-start">
-                        <h2 className="text-base font-poppinsMedium">Hoho Competition</h2>
-                        
-                        <p className="text-sm font-poppinsRegular text-secText">Perlombaan yang paling dinanti tahun ini! Daftarkan tim mu sekarang dan jadilah juara masa depan!</p>
-                      </div>
-                    </div>
-                    ))}
 
-                    <div 
-                      className="card w-full rounded-xl overflow-hidden flex flex-col bg-white" 
-                      key={'1'} 
-                      onClick={() => {handleLomba("q")}}>
-                      <div className="w-full relative overflow-hidden rounded-lg aspect-video">
-                        <Image
-                          src={'/imgs/dashboard-imgs/Contoh-Gambar_1.png'}
-                          alt="Image Poster"
-                          width={1}
-                          height={1}
-                          layout="responsive"
-                        />
-                        <div className="flex absolute top-2 left-2 w-full flex-row gap-1 justify-start items-center my-2">
-                          <div className="flex justify-center items-center rounded-3xl bg-white text-normalText font-poppinsRegular text-xs px-4 py-2">Web Design</div>
-                          <div className="flex justify-center items-center rounded-3xl bg-white text-normalText font-poppinsRegular text-xs px-4 py-2">Tim</div>
-                          <div className="flex justify-center items-center rounded-3xl bg-white text-normalText font-poppinsRegular text-xs px-4 py-2">21 Okt</div>
+                          <div className="flex justify-center items-center rounded-3xl bg-white text-normalText font-poppinsRegular text-xs px-4 py-2">{card.category}</div>
+                          <div className="flex justify-center items-center rounded-3xl bg-white text-normalText font-poppinsRegular text-xs px-4 py-2">{card.type}</div>
+                          <div className="flex justify-center items-center rounded-3xl bg-white text-normalText font-poppinsRegular text-xs px-4 py-2">{handleDate(card.endDate)}</div>
                         </div>
                       </div>
                       <div className="detail w-full px-4 py-5 gap-2 justify-start items-start">
@@ -386,6 +370,8 @@ export default function Home() {
                         <p className="text-sm font-poppinsRegular text-secText">Perlombaan yang paling dinanti tahun ini! Daftarkan tim mu sekarang dan jadilah juara masa depan!</p>
                       </div>
                     </div>
+                    
+                    ))}
                     {/* CARD */}
                     <Link href={'/lomba'} className="text-base underline font-poppinsMedium text-normalText my-1">Lihat Semua</Link>
                   </div>

@@ -5,8 +5,10 @@ import { fetchUser } from "@/utils/fetchUser";
 import { loginUser } from "@/utils/loginUser"
 
 type User = {
+  id?: string | undefined;
   name: string;
   imageUrl: string;
+  nim: string;
 };
 
 interface UserContextType {
