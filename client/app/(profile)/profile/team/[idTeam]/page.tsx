@@ -74,7 +74,7 @@ export default function DetailLomba({
         router.push(`/lomba/`)
     }
 
-    // if(error) return(router.push("/lomba"))
+    if(error) return(router.push("/lomba"))
 
     return (
         <div className="relative bg-blueFade items-start w-full min-h-screen">
@@ -223,6 +223,7 @@ export default function DetailLomba({
                         </div>
                     </div>
                     {/* CARD */}
+                    {card ? "" : ""}
                     <div className="flex flex-col justify-start items-start w-full">
                         <Button onClick={() => {}}>Ajukan Reimburse</Button>
                         <Button 
