@@ -1,5 +1,5 @@
 export default function Reimburse(){
     return(
-        <div className="">remburs</div>
+        <div className="">Reimburse Page</div>
     )
 }
