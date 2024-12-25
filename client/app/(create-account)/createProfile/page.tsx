@@ -17,12 +17,12 @@ export default function CreateProfile() {
   useEffect(() => {
     const nim = localStorage.getItem("nim");
     const token = localStorage.getItem("token");
-    
-    if (!nim || !token ) {
+
+    if (!nim || !token) {
       router.push("/");
-    }else{
-      const decodedToken = atob(token)
-      if(!decodedToken.includes("LolosOtpSAW")){
+    } else {
+      const decodedToken = atob(token);
+      if (!decodedToken.includes("LolosOtpSAW")) {
         router.push("/");
       }
     }
@@ -57,38 +57,40 @@ export default function CreateProfile() {
     }
 
     try {
-    // Membuat FormData untuk mengirim data
-    const decodedNim = atob(nim);
-    const formData = new FormData();
+      // Membuat FormData untuk mengirim data
+      const decodedNim = atob(nim);
+      const formData = new FormData();
 
-    // Menambahkan key profile (file) dengan content type otomatis
-    formData.append("profile", selectedImage);
+      // Menambahkan key profile (file) dengan content type otomatis
+      formData.append("profile", selectedImage);
 
-    // Menambahkan data text secara manual dengan text/plain
-    formData.append("nim", decodedNim);
-    formData.append("firstName", firstName);
-    formData.append("lastName", lastName);
-    formData.append("gender", gender);
+      // Menambahkan data text secara manual dengan text/plain
+      formData.append("nim", decodedNim);
+      formData.append("firstName", firstName);
+      formData.append("lastName", lastName);
+      formData.append("gender", gender);
 
-    // Mengirim request ke API menggunakan fetch
-    const response = await fetch("https://lomba-backend.vercel.app/auth/image-profile", {
-      method: "POST",
-      body: formData,
-      credentials : 'include'
-    });
+      // Mengirim request ke API menggunakan fetch
+      const response = await fetch(
+        "https://lomba-backend.vercel.app/auth/image-profile",
+        {
+          method: "POST",
+          body: formData,
+          credentials: "include",
+        }
+      );
 
-    if (!response.ok) {
-      throw new Error("Failed to upload image profile");
-    }
+      if (!response.ok) {
+        throw new Error("Failed to upload image profile");
+      }
 
-    const result = await response.json();
-    if(!result.success) throw new Error("Failed to update profile")
+      const result = await response.json();
+      if (!result.success) throw new Error("Failed to update profile");
 
-    localStorage.removeItem("nim");
-    localStorage.removeItem("token");
-    localStorage.setItem("logedin", "true");
-    router.push("/");
-
+      localStorage.removeItem("nim");
+      localStorage.removeItem("token");
+      localStorage.setItem("logedin", "true");
+      router.push("/");
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Terjadi kesalahan.");
     }
@@ -98,7 +100,7 @@ export default function CreateProfile() {
 
   return (
     <div className="relative flex flex-col h-screen w-screen overflow-hidden">
-      <NavbarBack href={'/otp'}></NavbarBack>
+      <NavbarBack href={"/otp"}></NavbarBack>
       <form
         onSubmit={handleSubmit}
         className="w-full flex flex-col px-6 py-8 pt-32 justify-between items-center h-screen"
@@ -106,15 +108,17 @@ export default function CreateProfile() {
         <div className="flex flex-col justify-center items-center gap-6">
           <div className="relative">
             <div className="w-40 h-40 object-cover border rounded-full overflow-hidden">
-                <Image
-                    src={selectedImage
-                        ? URL.createObjectURL(selectedImage)
-                        : `imgs/create-account-imgs/default-img.svg`}
-                    alt="Image Profile Preview"
-                    width={1}
-                    height={1}
-                    layout="responsive"
-                />
+              <Image
+                src={
+                  selectedImage
+                    ? URL.createObjectURL(selectedImage)
+                    : `imgs/create-account-imgs/default-img.svg`
+                }
+                alt="Image Profile Preview"
+                width={1}
+                height={1}
+                layout="responsive"
+              />
             </div>
             <input
               type="file"
@@ -125,19 +129,22 @@ export default function CreateProfile() {
               className="absolute top-0 left-0 h-full opacity-0 cursor-pointer"
             />
             <div className="absolute bottom-0 right-0 w-[48px] overflow-hidden">
-                <Image
-                    src={`imgs/create-account-imgs/img.svg`}
-                    alt="Image Profile Preview Icon"
-                    width={1}
-                    height={1}
-                    layout="responsive"
-                />
+              <Image
+                src={`imgs/create-account-imgs/img.svg`}
+                alt="Image Profile Preview Icon"
+                width={1}
+                height={1}
+                layout="responsive"
+              />
             </div>
           </div>
           <div className="flex flex-col justify-center items-center gap-2">
-            <h1 className="text-xl font-poppinsSemiBold text-blueSec text-center">User Profile</h1>
+            <h1 className="text-xl font-poppinsSemiBold text-blueSec text-center">
+              User Profile
+            </h1>
             <p className="text-sm font-poppinsRegular text-normalText text-center">
-              Atur profil dan preferensi Anda untuk pengalaman yang lebih personal.
+              Atur profil dan preferensi Anda untuk pengalaman yang lebih
+              personal.
             </p>
             {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
           </div>

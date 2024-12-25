@@ -1,5 +1,3 @@
-export default function History(){
-    return(
-        <div className="">History Page</div>
-    )
+export default function History() {
+  return <div className="">History Page</div>;
 }
