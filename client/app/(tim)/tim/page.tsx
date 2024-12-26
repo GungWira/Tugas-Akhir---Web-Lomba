@@ -1,10 +1,11 @@
 "use client";
 
-import NavbarLogin from "@/components/NavbarLogin";
+import NavbarBackTitled from "@/components/NavbarBackTitled";
 import Button from "@/components/Button";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import Footer from "@/components/Footer";
 
 interface Teams {
   competition: {
@@ -49,10 +50,10 @@ export default function Lomba() {
   };
 
   return (
-    <div className="relative flex flex-col min-h-[100vh] justify-start items-start w-full px-4">
-      <NavbarLogin></NavbarLogin>
+    <div className="relative flex flex-col min-h-[100vh] justify-start items-start w-full">
+      <NavbarBackTitled>Team</NavbarBackTitled>
 
-      <div className="flex flex-col justify-start items-start p-4 gap-2 mt-24 w-full">
+      <div className="flex flex-col justify-start items-start p-4 pt-0 gap-2 mt-24 w-full min-h-screen">
         <p className="text-base font-poppinsSemiBold">Semua Tim</p>
         <div className="w-full flex flex-col justify-start items-start gap-4">
           {/* {teams ? <div className=""></div> : ""} */}
@@ -130,6 +131,7 @@ export default function Lomba() {
           ))}
         </div>
       </div>
+      <Footer></Footer>
     </div>
   );
 }

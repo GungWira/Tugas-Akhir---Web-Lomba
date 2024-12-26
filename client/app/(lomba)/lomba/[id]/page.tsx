@@ -1,13 +1,14 @@
 "use client";
 
 import Button from "@/components/Button";
-import NavbarLogin from "@/components/NavbarLogin";
+import NavbarBackTitled from "@/components/NavbarBackTitled";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import TeamCard from "@/components/TeamCard";
 import { useUser } from "@/contexts/UserContext";
+import Footer from "@/components/Footer";
 
 interface Card {
   id: string;
@@ -106,9 +107,7 @@ export default function DetailLomba({
 
           if (!teamResponse.ok) throw new Error("Gagal memuat data tim");
           const dataTeam = await teamResponse.json();
-          console.log(dataTeam);
           setCardTeam(dataTeam);
-          setLoading(false);
         }
       } catch (err: unknown) {
         if (err instanceof Error) {
@@ -124,7 +123,7 @@ export default function DetailLomba({
   useEffect(() => {
     const fetchStatus = async () => {
       try {
-        if (user && user.id && slug) {
+        if (user && user.id && slug && card) {
           const userStatusResponse = await fetch(
             `https://lomba-backend.vercel.app/competitions/${slug}/user-status?userId=${user.id}`,
             {
@@ -142,7 +141,7 @@ export default function DetailLomba({
           if (userStatus.hasTeam) {
             setTeamDetail(userStatus.teamDetails);
           }
-          console.log(userStatus);
+          setLoading(false);
         }
       } catch (err: unknown) {
         if (err instanceof Error) {
@@ -153,7 +152,7 @@ export default function DetailLomba({
       }
     };
     fetchStatus();
-  }, [slug, user]);
+  }, [slug, user, card]);
 
   const handleDaftar = async () => {
     try {
@@ -201,29 +200,31 @@ export default function DetailLomba({
   if (error && !card) return router.push("/lomba");
 
   return (
-    <div className="relative flex flex-col min-h-[100vh] justify-start items-start w-full px-4">
-      <NavbarLogin></NavbarLogin>
+    <div className="relative flex flex-col min-h-[100vh] justify-start items-start w-full">
+      <NavbarBackTitled>Detail Lomba</NavbarBackTitled>
 
-      <div className="flex flex-col justify-start items-start py-4 gap-2 mt-24 w-full">
+      <div className="flex flex-col justify-start items-start py-4 pt-0 gap-2 mt-24 w-full px-4">
         <div className="bg-white w-full rounded-md px-4 py-6 flex flex-col justify-start items-start gap-2">
-          {!card ? (
+          {loading ? (
             <div className="font-poppinsBold text-lg w-3/5 bg-[#F1F2F6] text-[#F1F2F6]">
               p
             </div>
           ) : (
             <h1 className="text-normalText font-poppinsBold text-lg">
-              {card.title}
+              {card?.title}
             </h1>
           )}
 
           <div
             className={`w-full overflow-hidden rounded-lg aspect-video flex justify-center ${
-              card ? "items-start" : "items-center"
+              !loading ? "items-start" : "items-center"
             }`}
           >
             <Image
               src={`${
-                card?.imagePoster || "/imgs/competition/default-poster.svg"
+                !loading
+                  ? card?.imagePoster || "/imgs/competition/default-poster.svg"
+                  : "/imgs/competition/default-poster.svg"
               }`}
               alt="Poster Image"
               width={16}
@@ -234,27 +235,27 @@ export default function DetailLomba({
           <div className="flex flex-row justify-start items-center gap-1 my-1">
             <div
               className={`flex justify-center items-center rounded-3xl ${
-                card ? "bg-blueSec" : "bg-[#F1F2F6]"
+                !loading ? "bg-blueSec" : "bg-[#F1F2F6]"
               } ${
-                card ? "text-white" : "text-[#F1F2F6]"
+                !loading ? "text-white" : "text-[#F1F2F6]"
               } font-poppinsRegular text-xs px-4 py-2`}
             >
               {card?.type || "Waiting"}
             </div>
             <div
               className={`flex justify-center items-center rounded-3xl ${
-                card ? "bg-blueSec" : "bg-[#F1F2F6]"
+                !loading ? "bg-blueSec" : "bg-[#F1F2F6]"
               } ${
-                card ? "text-white" : "text-[#F1F2F6]"
+                !loading ? "text-white" : "text-[#F1F2F6]"
               } font-poppinsRegular text-xs px-4 py-2`}
             >
               {card?.level || "Level"}
             </div>
             <div
               className={`flex justify-center items-center rounded-3xl ${
-                card ? "bg-blueSec" : "bg-[#F1F2F6]"
+                !loading ? "bg-blueSec" : "bg-[#F1F2F6]"
               } ${
-                card ? "text-white" : "text-[#F1F2F6]"
+                !loading ? "text-white" : "text-[#F1F2F6]"
               } font-poppinsRegular text-xs px-4 py-2`}
             >
               {handleDate(card?.endDate || null) || "31 Desember"}
@@ -267,7 +268,7 @@ export default function DetailLomba({
               </div>
             ) : (
               <p className="text-normalText opacity-70 text-justify text-sm font-poppinsRegular my-2">
-                {card!.description}
+                {card?.description}
               </p>
             )}
             {/* LINK DAFTAR */}
@@ -278,7 +279,7 @@ export default function DetailLomba({
                 </div>
               ) : (
                 <Link
-                  href={card!.linkPendaftaran}
+                  href={card?.linkPendaftaran || "/"}
                   className="flex flex-row justify-start items-center gap-1 text-blueSec font-poppinsMedium text-sm"
                 >
                   Link Pendaftaran
@@ -302,7 +303,7 @@ export default function DetailLomba({
                 </div>
               ) : (
                 <Link
-                  href={card!.linkGuidebook}
+                  href={card?.linkGuidebook || "/"}
                   className="flex flex-row justify-start items-center gap-1 text-blueSec font-poppinsMedium text-sm"
                 >
                   Link Guidebook
@@ -327,63 +328,69 @@ export default function DetailLomba({
             ) : (
               ""
             )}
-            {/* JOIN */}
-            <Button
-              onClick={() => {
-                handleDaftar();
-              }}
-              isDisabled={loading}
-              className={`${
-                join ? "hidden" : "flex"
-              } justify-center items-center`}
-            >
-              Daftar
-            </Button>
-            {/* REIMBURSE */}
-            <Button
-              onClick={handleReimburese}
-              isDisabled={loading}
-              className={`${
-                join ? (reimburse ? "hidden" : "flex") : "hidden"
-              } justify-center items-center`}
-            >
-              Ajukan Reimburse
-            </Button>
+            {loading ? (
+              <div className=""></div>
+            ) : (
+              <div className={`flex flex-col justify-start items-start w-full`}>
+                {/* JOIN */}
+                <Button
+                  onClick={() => {
+                    handleDaftar();
+                  }}
+                  isDisabled={loading}
+                  className={`${
+                    join ? "hidden" : "flex"
+                  } justify-center items-center`}
+                >
+                  Daftar
+                </Button>
+                {/* REIMBURSE */}
+                <Button
+                  onClick={handleReimburese}
+                  isDisabled={loading}
+                  className={`${
+                    join ? (reimburse ? "hidden" : "flex") : "hidden"
+                  } justify-center items-center`}
+                >
+                  Ajukan Reimburse
+                </Button>
 
-            {/* TEAM */}
-            <Button
-              className={`bg-[#F1F2F6] text-normalText 
-              ${
-                join
-                  ? reimburse
-                    ? "hidden"
-                    : isTim
-                    ? "hidden"
-                    : "flex"
-                  : "hidden"
-              } justify-center items-center`}
-              style={{ backgroundColor: `#F1F2F6`, color: `#767676` }}
-              onClick={handleTeam}
-              isDisabled={loading}
-            >
-              Cari Tim
-            </Button>
+                {/* TEAM */}
+                <Button
+                  className={`bg-[#F1F2F6] text-normalText 
+                ${
+                  join
+                    ? reimburse
+                      ? "hidden"
+                      : isTim
+                      ? "hidden"
+                      : "flex"
+                    : "hidden"
+                } justify-center items-center`}
+                  style={{ backgroundColor: `#F1F2F6`, color: `#767676` }}
+                  onClick={handleTeam}
+                  isDisabled={loading}
+                >
+                  Cari Tim
+                </Button>
 
-            {/* RESULT */}
-            <Button
-              onClick={handleResult}
-              isDisabled={loading}
-              className={`${
-                join ? (reimburse ? "flex" : "hidden") : "hidden"
-              } justify-center items-center`}
-            >
-              Result
-            </Button>
+                {/* RESULT */}
+                <Button
+                  onClick={handleResult}
+                  isDisabled={loading}
+                  className={`${
+                    join ? (reimburse ? "flex" : "hidden") : "hidden"
+                  } justify-center items-center`}
+                >
+                  Result
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       </div>
 
-      <div className="flex flex-col justify-start items-start gap-3 w-full">
+      <div className="flex flex-col justify-start items-start gap-3 w-full px-4">
         {cardTeam.map((card: CardTeam) => (
           <TeamCard
             key={card.id}
@@ -408,6 +415,8 @@ export default function DetailLomba({
           ></TeamCard>
         ))}
       </div>
+
+      <Footer></Footer>
     </div>
   );
 }

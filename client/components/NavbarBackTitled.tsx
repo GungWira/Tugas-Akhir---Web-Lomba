@@ -1,5 +1,6 @@
 import React from "react";
 import { useRouter } from "next/navigation";
+import { useUser } from "@/contexts/UserContext";
 import Image from "next/image";
 
 type NavbarBackProps = {
@@ -14,15 +15,22 @@ const NavbarBack: React.FC<NavbarBackProps> = ({
   style = {},
 }) => {
   const router = useRouter();
+  const { user } = useUser();
 
   const handleBack = () => {
     if (router) {
       router.back();
     }
   };
+
+  const handleProfile = () => {
+    if (user) {
+      router.push("/profile");
+    }
+  };
   return (
     <div
-      className={`w-full px-6 py-8 pb-12 flex flex-row justify-between items-center bg-blueFade left-0 fixed z-50 ${className}`}
+      className={`w-full px-6 py-8 pb-6 flex flex-row justify-between items-center bg-[#F1F2F6] left-0 fixed z-60 ${className}`}
       style={style}
     >
       <button onClick={handleBack} className="w-[36px]">
@@ -34,19 +42,25 @@ const NavbarBack: React.FC<NavbarBackProps> = ({
           layout="responsive"
         />
       </button>
-      <div className="text-white text-center font-poppinsSemiBold text-xl">
+      <div className="text-normalText-center font-poppinsSemiBold text-xl">
         {children}
       </div>
-      <div className="flex flex-row justify-between items-center  rounded-full w-[36px] bg-blueFade">
-        <div className="w-[24px]">
+      <div className="flex flex-row justify-between items-center  rounded-full w-[36px]">
+        <button
+          typeof="button"
+          onClick={handleProfile}
+          className="w-16 aspect-square bg-transparent border-white rounded-lg overflow-hidden"
+        >
           <Image
-            src={"/imgs/indonesia-flag-rounded.svg"}
-            alt="Indonesian Flag"
+            src={
+              user?.imageUrl || "/imgs/dashboard-imgs/Default-Profile-Img.svg"
+            }
+            alt="User Profile Image"
             width={1}
             height={1}
             layout="responsive"
           />
-        </div>
+        </button>
       </div>
     </div>
   );

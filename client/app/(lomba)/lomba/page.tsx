@@ -1,11 +1,12 @@
 "use client";
 
-import NavbarLogin from "@/components/NavbarLogin";
+import NavbarBackTitled from "@/components/NavbarBackTitled";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { formatDate } from "@/utils/formatDate";
 import CompetitionCard from "@/components/CompetitionCard";
+import Footer from "@/components/Footer";
 
 interface Card {
   id: string;
@@ -63,10 +64,10 @@ export default function Lomba() {
   if (error) return router.push("/");
 
   return (
-    <div className="relative flex flex-col min-h-[100vh] justify-start items-start w-full px-4">
-      <NavbarLogin></NavbarLogin>
+    <div className="relative flex flex-col min-h-[100vh] justify-start items-start w-full">
+      <NavbarBackTitled>Competition</NavbarBackTitled>
 
-      <div className="flex flex-col justify-start items-start py-4 gap-2 mt-24 w-full">
+      <div className="flex flex-col justify-start items-start py-12 pt-0 gap-2 mt-24 w-full px-4">
         <p className="text-base font-poppinsSemiBold">Semua Lomba</p>
         <div className="w-full rounded-md flex flex-col justify-start items-start gap-4">
           {/* KATEGORI */}
@@ -154,6 +155,8 @@ export default function Lomba() {
           ))}
         </div>
       </div>
+
+      <Footer></Footer>
     </div>
   );
 }

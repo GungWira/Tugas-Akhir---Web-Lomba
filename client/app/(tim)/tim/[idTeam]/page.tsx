@@ -7,6 +7,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useUser } from "@/contexts/UserContext";
+import Footer from "@/components/Footer";
 
 interface Team {
   id: string;
@@ -121,7 +122,7 @@ export default function DetailTeam({
     <div className="relative flex flex-col min-h-[100vh] justify-start items-start w-full">
       <NavbarBackTitled>Detail Tim</NavbarBackTitled>
 
-      <div className="flex flex-col justify-start items-start p-6 py-8 gap-2 mt-24 w-full bg-[#F1F2F6] min-h-screen rounded-3xl z-50">
+      <div className="flex flex-col justify-start items-start px-6 pb-8  gap-2 mt-24 w-full bg-[#F1F2F6] min-h-screen rounded-3xl z-50">
         {/* INFORMATION LEADER ONLY */}
         <div
           className={`flex flex-col w-full justify-start items-start gap-2 mb-4 ${
@@ -498,6 +499,7 @@ export default function DetailTeam({
           </div>
         </div>
       </div>
+      <Footer></Footer>
     </div>
   );
 }

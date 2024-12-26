@@ -9,6 +9,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/contexts/UserContext";
+import Footer from "@/components/Footer";
 
 interface Card {
   id: string;
@@ -26,6 +27,7 @@ interface Teams {
     endDate: string;
   };
   id: string;
+  description: string;
   leader: {
     name: string;
     profile: string;
@@ -439,10 +441,11 @@ export default function Home() {
                               {card.title}
                             </h2>
 
-                            <p className="text-sm font-poppinsRegular text-secText">
-                              Perlombaan yang paling dinanti tahun ini!
-                              Daftarkan tim mu sekarang dan jadilah juara masa
-                              depan!
+                            <p
+                              className="text-sm font-poppinsRegular text-secText line-clamp-3 mt-1"
+                              style={{ WebkitLineClamp: 3 }}
+                            >
+                              {card.description}
                             </p>
                           </div>
                         </div>
@@ -500,8 +503,7 @@ export default function Home() {
                           </div>
                         </div>
                         <p className="font-poppinsRegular text-sm text-normalText opacity-40">
-                          Dicari seorang backend developer serta ui designer
-                          figma yang kompeten dan dapat diajak berkomunikasi.
+                          {team.description}
                         </p>
                         <div className="detail w-full flex flex-col gap-2 justify-start items-start">
                           {/* KETUA */}
@@ -572,6 +574,7 @@ export default function Home() {
             </div>
             {/* TIM */}
           </div>
+          <Footer></Footer>
         </div>
       )}
     </div>
