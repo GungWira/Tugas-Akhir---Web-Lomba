@@ -106,10 +106,10 @@ export default function Reimburse({
   };
 
   return (
-    <div className="relative flex flex-col min-h-[100vh] justify-start items-start w-full max-h-screen overflow-hidden">
+    <div className="relative flex flex-col min-h-[100vh] justify-start items-center w-full max-h-screen sm:max-h-none sm:overflow-scroll md:min-h-0 overflow-hidden">
       <NavbarBackTitled>Ajukan Reiumburse</NavbarBackTitled>
 
-      <div className="flex flex-col justify-start items-start p-6 py-8 gap-2 mt-24 w-full bg-[#F1F2F6] min-h-screen rounded-3xl z-50">
+      <div className="flex flex-col justify-start items-start p-6 py-8 gap-2 mt-24 w-full bg-[#F1F2F6] min-h-screen md:min-h-0 rounded-3xl z-50 max-w-5xl md:bg-white">
         <div className="w-full">
           <label className="text-normalText font-poppinsSemiBold text-md">
             Nama Penerima
@@ -177,7 +177,7 @@ export default function Reimburse({
           )}
           <label
             htmlFor="file-upload"
-            className="aspect-video overflow-hidden w-full mt-2 bg-white border-2 border-dashed border-[#DDDDDD] rounded-xl flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 transition"
+            className="aspect-video md:aspect-auto md:h-72 overflow-hidden w-full mt-2 bg-white border-2 border-dashed border-[#DDDDDD] rounded-xl flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 transition"
           >
             {!previewUrl ? (
               <>
@@ -212,7 +212,7 @@ export default function Reimburse({
           />
         </div>
 
-        <div className="fixed bottom-4 left-0 p-6 w-full">
+        <div className="fixed bottom-4 left-0 p-6 w-full sm:relative sm:mt-8 sm:p-0 sm:bottom-0">
           <Button
             onClick={handleUpload}
             className={`${

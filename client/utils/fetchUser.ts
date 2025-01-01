@@ -1,32 +1,53 @@
 export async function fetchUser() {
-    try {
-      const response = await fetch("https://lomba-backend.vercel.app/auth/verify", {
-        method: 'GET', 
+  try {
+    const response = await fetch(
+      "https://lomba-backend.vercel.app/auth/verify",
+      {
+        method: "GET",
         headers: {
-            'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        credentials: 'include',
-      });
-      if (!response.ok) throw new Error("Failed to fetch user");
-      const data = await response.json();
+        credentials: "include",
+      }
+    );
+    if (!response.ok) {
       return {
-        id : data.user.user.id || null,
-        name: data.user.user.lastName || "Guest User",
-        nim : data.user.user.student_id || "0000000000",
-        imageUrl: data.user.user.profile || "/imgs/dashboard-imgs/Default-Profile-Img.svg",
-        isLogin : data.loggedIn,
+        id: null,
+        name: "Guest User",
+        firstName: "User Firstname",
+        lastName: "User Lastname",
+        nim: "0000000000",
+        major: "User Major",
+        role: "UNROLE",
+        imageUrl: "/imgs/dashboard-imgs/Default-Profile-Img.svg",
+        isLogin: false,
       };
-    } catch (error) {
-      console.log("Error fetching user:", error);
-      return { 
-        name: "Guest User", 
-        imageUrl: "/imgs/dashboard-imgs/Default-Profile-Img.svg" ,
-        nim : "0000000000",
-        isLogin : false,
-        };
     }
-  };
-
-
-  
-  
+    const data = await response.json();
+    return {
+      id: data.user.User.id || null,
+      name: data.user.User.name || "Guest User",
+      firstName: data.user.User.firstName || "User Firstname",
+      lastName: data.user.User.lastName || "User Lastname",
+      nim: data.user.User.student_id || "0000000000",
+      major: data.user.User.major || "User Major",
+      role: data.user.User.role || "USER",
+      imageUrl:
+        data.user.User.profile ||
+        "/imgs/dashboard-imgs/Default-Profile-Img.svg",
+      isLogin: data.loggedIn,
+    };
+  } catch (error) {
+    console.log("Error fetching user:", error);
+    return {
+      name: "Guest User",
+      firstName: "User Firstname",
+      lastName: "User Lastname",
+      major: "User Major",
+      imageUrl: "/imgs/dashboard-imgs/Default-Profile-Img.svg",
+      nim: "0000000000",
+      role: "USER",
+      isLogin: false,
+    };
+  }
+}

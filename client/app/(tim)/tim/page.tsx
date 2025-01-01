@@ -50,17 +50,18 @@ export default function Lomba() {
   };
 
   return (
-    <div className="relative flex flex-col min-h-[100vh] justify-start items-start w-full">
+    <div className="relative flex flex-col min-h-[100vh] justify-start items-center w-full">
       <NavbarBackTitled>Team</NavbarBackTitled>
 
-      <div className="flex flex-col justify-start items-start p-4 pt-0 gap-2 mt-24 w-full min-h-screen">
+      <div className="flex flex-col justify-start items-start p-4 pt-0 gap-2 mt-24 w-full min-h-screen max-w-6xl">
         <p className="text-base font-poppinsSemiBold">Semua Tim</p>
-        <div className="w-full flex flex-col justify-start items-start gap-4">
-          {/* {teams ? <div className=""></div> : ""} */}
+        <div className="w-full flex md:grid md:grid-cols-2 xl:grid-cols-3t flex-col justify-start items-start gap-4">
           {/* CARD */}
           {teams.map((team: Teams) => (
             <Link
-              className="card w-full rounded-lg p-4 flex flex-col gap-3 overflow-hidden bg-white"
+              className={`card w-full rounded-lg p-4 flex flex-col gap-3 overflow-hidden bg-white ${
+                team.openSlots == 0 ? "hidden" : ""
+              }`}
               key={team.id}
               href={`/tim/${team.id}`}
             >
@@ -120,7 +121,7 @@ export default function Lomba() {
                   </div>
                   <div className="flex flex-col justify-start items-start gap-0 w-full">
                     <p className="text-normalText font-poppinsMedium text-sm">
-                      {team.openSlots - team.members.length + 1} Slot Tersisa
+                      {team.openSlots} Slot Tersisa
                     </p>
                     <p className="font-poppinsRegular text-xs text-normalText opacity-40"></p>
                   </div>

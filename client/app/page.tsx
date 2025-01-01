@@ -39,7 +39,7 @@ interface Teams {
 
 export default function Home() {
   const router = useRouter();
-  const user = useUser();
+  const { user } = useUser();
   const { login } = useUser();
   // ANIMATION
   const [isIntroHidden, setIsIntroHidden] = useState(false);
@@ -64,7 +64,7 @@ export default function Home() {
     try {
       if (nim && password) {
         await login({ nim, password });
-        if (!user.isLogin) {
+        if (user?.isLogin) {
           setError("NIM atau password salah");
         } else {
           setIsIntroHidden(true);
@@ -88,7 +88,11 @@ export default function Home() {
         if (user) {
           setIsLogin(user.isLogin);
           if (user.isLogin) {
-            setIsIntroHidden(true);
+            if (user.role === "ADMIN") {
+              router.push("/admin");
+            } else {
+              setIsIntroHidden(true);
+            }
           }
         }
       } catch (err: unknown) {
@@ -96,7 +100,7 @@ export default function Home() {
       }
     };
     checkLogin();
-  }, [user]);
+  }, [user, router]);
 
   // IF USER LOGGEDIN, FETCH DATA FOR USER
   useEffect(() => {
@@ -354,27 +358,30 @@ export default function Home() {
       ) : (
         // DASHBOARD IF LOGIN
         <div
-          className={`relative z-40 w-full max-w-6xl min-h-screen translate-y-[100vh] ${
+          className={`relative z-40 w-full  min-h-screen translate-y-[100vh] flex flex-col justify-center items-center ${
             isIntroHidden ? "animate-moveUpAndShow" : ""
           }`}
           style={{ animationDelay: `1550ms` }}
         >
-          <div className="flex flex-col w-full justify-start items-start py-6 px-4 mt-20 gap-12">
+          <div className="flex flex-col w-full justify-start items-center py-6 px-4 mt-20 gap-12 max-w-6xl">
             {/* SAMBUTAN */}
             <div
               className="
               flex w-full rounded-3xl bg-bluePrimary px-6 gap-0 sm:gap-8 overflow-hidden
-              flex-row justify-start items-center sm:rounded-3xl sm:pb-0 sm:max-h-64 sm:-h-full sm:py-0"
+              flex-row justify-start items-center md:items-end sm:rounded-3xl sm:pb-0 sm:max-h-64 sm:-h-full sm:py-0 md:max-h-fit"
             >
-              <div className="flex flex-col justify-start items-start gap-2 relative sm:w-full min-w-64">
-                <h1 className="text-xl font-poppinsBold text-white">
-                  Halo {user.user?.name}!
+              <div className="flex flex-col justify-start items-start gap-2 relative sm:w-full min-w-64 md:pt-8 md:pb-12 md:ps-8">
+                <h1 className="text-xl md:text-2xl font-poppinsSemiBold text-white">
+                  Halo {user?.name}!
                 </h1>
-                <p className="text-sm font-poppinsRegular text-white opacity-70">
+                <p className="text-sm md:text-base font-poppinsRegular text-white opacity-70 md:max-w-80">
                   Yuk temukan info lomba terbaru dan tingkatkan prestasimu!
                 </p>
+                <Button className="hidden max-w-fit px-8 md:mt-2 md:flex">
+                  Mulai Sekarang
+                </Button>
               </div>
-              <div className="w-full md:h-full md:w-auto sm:flex min-w-64">
+              <div className="w-full md:h-full md:w-auto sm:flex min-w-64 md:min-w-80">
                 <Image
                   src={"/imgs/dashboard-imgs/Dashboard-Main-Img.svg"}
                   alt="Image Dashboard"
@@ -386,9 +393,27 @@ export default function Home() {
             </div>
 
             {/* LOMBA */}
-            <div className="flex flex-col gap-4 justify-start items-start w-full min-h-max">
-              <p className="text-base font-poppinsSemiBold">Lomba Terbaru</p>
-              <div className="flex flex-col justify-center items-center w-full min-h-64">
+            <div className="flex flex-col gap-1 justify-start items-start w-full min-h-max">
+              <div className="flex flex-row justify-between items-center gap-4 w-full">
+                <div className="flex flex-col justify-start items-start w-full gap-1">
+                  <p className="text-base font-poppinsSemiBold md:text-xl">
+                    Lomba Terbaru
+                  </p>
+                  <p className="text-xs md:text-sm font-poppinsRegular text-normalText opacity-70 mb-4">
+                    Cek lomba favoritmu sekarang juga!
+                  </p>
+                </div>
+                <Link
+                  href={"/lomba"}
+                  className="text-base font-poppinsMedium text-normalText my-1 w-full justify-end items-center text-right hidden sm:flex"
+                >
+                  <Button className="max-w-fit px-8 text-sm sm:mt-0">
+                    Lihat Semua
+                  </Button>
+                </Link>
+              </div>
+
+              <div className="flex flex-col justify-center items-center w-full min-h-64 overflow-hidden">
                 {competitionCards.length == 0 ? (
                   <div className="flex flex-col justify-center items-center gap-4 rounded-xl bg-white w-full min-h-64">
                     <div className="w-12 relative">
@@ -454,7 +479,7 @@ export default function Home() {
                     </div>
                     <Link
                       href={"/lomba"}
-                      className="text-base underline font-poppinsMedium text-normalText my-1"
+                      className="text-base underline font-poppinsMedium text-normalText my-1 sm:hidden"
                     >
                       Lihat Semua
                     </Link>
@@ -465,8 +490,23 @@ export default function Home() {
             {/* LOMBA */}
 
             {/* TIM */}
-            <div className="w-full flex flex-col justify-start items-start gap-4">
-              <p className="text-base font-poppinsSemiBold">Tim Dibutuhkan</p>
+            <div className="w-full flex flex-col justify-start items-start">
+              <div className="flex flex-row justify-between items-center gap-4 w-full">
+                <div className="flex flex-col justify-start items-start w-full gap-1">
+                  <p className="text-base font-poppinsSemiBold md:text-xl">
+                    Tim Dibutuhkan
+                  </p>
+                  <p className="text-xs md:text-sm font-poppinsRegular text-normalText opacity-70 mb-4">
+                    Temukan tim ideal untuk kolaborasi!
+                  </p>
+                </div>
+                <Link
+                  href={"/tim"}
+                  className="text-base underline font-poppinsMedium text-normalText my-1 w-full justify-end items-end text-right hidden sm:flex"
+                >
+                  Lihat Semua
+                </Link>
+              </div>
 
               <div className="flex flex-col justify-center items-center w-full">
                 {teamCards.length == 0 ? (
@@ -486,11 +526,13 @@ export default function Home() {
                     </p>
                   </div>
                 ) : (
-                  <div className="w-full flex flex-col gap-4 justify-center items-center">
+                  <div className="w-full sm:grid flex md:grid-cols-2 flex-col gap-4 justify-start items-start">
                     {/* CARD */}
                     {teamCards.map((team: Teams) => (
                       <Link
-                        className="card w-full rounded-lg p-4 flex flex-col gap-3 overflow-hidden bg-white"
+                        className={`card w-full rounded-lg p-4 flex flex-col gap-3 overflow-hidden bg-white h-full ${
+                          team.openSlots > 0 ? "" : "hidden"
+                        }`}
                         key={team.id}
                         href={`/tim/${team.id}`}
                       >
@@ -551,8 +593,7 @@ export default function Home() {
                             </div>
                             <div className="flex flex-col justify-start items-start gap-0 w-full">
                               <p className="text-normalText font-poppinsMedium text-sm">
-                                {team.openSlots - team.members.length + 1} Slot
-                                Tersisa
+                                {team.openSlots} Slot Tersisa
                               </p>
                               <p className="font-poppinsRegular text-xs text-normalText opacity-40"></p>
                             </div>
@@ -564,7 +605,7 @@ export default function Home() {
                     {/* CARD */}
                     <Link
                       href={"/tim"}
-                      className="text-base underline font-poppinsMedium text-normalText my-1"
+                      className="text-base underline font-poppinsMedium text-normalText my-1 sm:hidden w-full flex justify-center items-center"
                     >
                       Lihat Semua
                     </Link>

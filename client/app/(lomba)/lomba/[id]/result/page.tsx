@@ -86,10 +86,10 @@ export default function CompetitionForm({
   };
 
   return (
-    <div className="relative flex flex-col min-h-[100vh] justify-start items-start w-full max-h-screen overflow-hidden">
+    <div className="relative flex flex-col min-h-[100vh] justify-start items-center w-full max-h-screen overflow-hidden max-w-5xl sm:max-h-none md:min-h-0">
       <NavbarBackTitled>Hasil Perlombaan</NavbarBackTitled>
 
-      <div className="flex flex-col justify-start items-start p-6 py-8 gap-2 mt-24 w-full bg-[#F1F2F6] min-h-screen rounded-3xl z-50">
+      <div className="flex flex-col justify-start items-start p-6 py-8 gap-2 mt-24 w-full bg-[#F1F2F6] min-h-screen rounded-3xl z-50 md:bg-white md:min-h-0">
         <div className="w-full mt-2">
           <label className="text-normalText font-poppinsSemiBold text-md">
             Hasil Perlombaan
@@ -143,7 +143,7 @@ export default function CompetitionForm({
           </p>
         )}
 
-        <div className="fixed bottom-4 left-0 p-6 w-full">
+        <div className="fixed bottom-4 left-0 p-6 w-full md:p-0 md:bottom-0 md:relative">
           <Button
             onClick={handleSubmit}
             className={`${

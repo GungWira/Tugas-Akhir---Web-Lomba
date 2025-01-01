@@ -85,24 +85,46 @@ const TeamCard: React.FC<TeamCardProps> = ({
           </div>
         </div>
         {/* ANGGOTA */}
-        <div className="w-full border px-3 py-1 rounded-md flex flex-row justify-between gap-2 items-center">
-          <div className="max-w-10 min-w-10 aspect-square overflow-hidden rounded-full border">
-            <Image
-              src={"/imgs/dashboard-imgs/Default-Profile-Img.svg"}
-              alt="Image Profile Default"
-              width={1}
-              height={1}
-              layout="responsive"
-              className="w-full"
-            />
+
+        {teamSlot == 0 ? (
+          <div className="w-full border px-3 py-1 rounded-md flex flex-row justify-between gap-2 items-center">
+            <div className="min-w-10 min-h-10 rounded-full border overflow-hidden">
+              <Image
+                src={"/imgs/profile/ready.svg"}
+                alt="Image Profile Leader"
+                width={1}
+                height={1}
+                layout="responsive"
+                className="w-full"
+              />
+            </div>
+            <div className="flex flex-col justify-start items-start gap-0 w-full">
+              <p className="text-blueSec font-poppinsSemiBold text-sm">
+                Tim Siap
+              </p>
+              <p className="font-poppinsRegular text-xs text-normalText opacity-40"></p>
+            </div>
           </div>
-          <div className="flex flex-col justify-start items-start gap-0 w-full">
-            <p className="text-normalText font-poppinsMedium text-sm">
-              {teamSlot} Slot Tersisa
-            </p>
-            <p className="font-poppinsRegular text-xs text-normalText opacity-40"></p>
+        ) : (
+          <div className="w-full border px-3 py-1 rounded-md flex flex-row justify-between gap-2 items-center">
+            <div className="min-w-10 min-h-10 rounded-full border overflow-hidden">
+              <Image
+                src={"/imgs/dashboard-imgs/Default-Profile-Img.svg"}
+                alt="Image Profile Leader"
+                width={1}
+                height={1}
+                layout="responsive"
+                className="w-full"
+              />
+            </div>
+            <div className="flex flex-col justify-start items-start gap-0 w-full">
+              <p className="text-normalText font-poppinsMedium text-sm">
+                {teamSlot ? teamSlot : "0"} Slot Tersisa
+              </p>
+              <p className="font-poppinsRegular text-xs text-normalText opacity-40"></p>
+            </div>
           </div>
-        </div>
+        )}
         <Button className="text-sm">Detail</Button>
       </div>
     </div>

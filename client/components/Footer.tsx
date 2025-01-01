@@ -9,17 +9,17 @@ type NavbarProps = {
 const Footer: React.FC<NavbarProps> = ({ className = "" }) => {
   return (
     <div
-      className={`w-full px-6 py-2 flex flex-row justify-between items-center bg-white z-50 ${className}`}
+      className={`w-full px-6 py-2 flex flex-row justify-center items-center bg-white z-50 ${className}`}
     >
       <div
         className={`w-full max-w-6xl flex flex-col justify-start items-start`}
       >
         {/* SUBSCRIBE */}
-        <div className="flex flex-col justify-between w-full items-center gap-4 py-8 border-b border-[#DDDDDD]">
-          <div className="w-full max-w-96 flex justify-start items-center font-poppinsSemiBold text-lg text-normalText">
+        <div className="flex flex-col justify-between w-full items-center gap-4 py-8 border-b border-[#DDDDDD] sm:flex-row">
+          <div className="w-full flex justify-start items-center font-poppinsSemiBold text-lg text-normalText sm:max-w-72">
             Ikuti kami agar untuk informasi lomba terbaru
           </div>
-          <div className="flex flex-row justify-start items-center gap-2 w-full max-w-96">
+          <div className="flex flex-row justify-start items-center gap-2 w-full sm:max-w-96">
             <input
               type="email"
               placeholder="Masukkan Email Anda"
@@ -31,7 +31,7 @@ const Footer: React.FC<NavbarProps> = ({ className = "" }) => {
           </div>
         </div>
         {/* FOOTER */}
-        <div className="flex flex-col justify-start items-start gap-6 py-8">
+        <div className="flex flex-col justify-start items-start gap-6 py-8 sm:flex-row sm:justify-between sm:w-full">
           <div className="flex flex-col justify-start items-start gap-1">
             <Link href={"/"} className="w-8 aspect-square overflow-hidden">
               <Image
@@ -49,7 +49,7 @@ const Footer: React.FC<NavbarProps> = ({ className = "" }) => {
               Jelajahi lomba, ukir prestasi, gapai mimpimu!
             </p>
           </div>
-          <div className="flex flex-col w-full max-w-96 justify-between items-start gap-5">
+          <div className="flex flex-col w-full max-w-96 justify-between items-start gap-5 sm:w-full sm:flex-row">
             <div className="flex flex-col gap-1 justify-start items-start">
               <p className="text-normalText font-poppinsMedium text-base">
                 Navigasi

@@ -7,7 +7,7 @@ type NavbarBackProps = {
   href: string;
 };
 
-const NavbarBack: React.FC<NavbarBackProps> = () => {
+const NavbarBack: React.FC<NavbarBackProps> = ({ className = "" }) => {
   const router = useRouter();
   const handleBack = () => {
     if (router) {
@@ -15,7 +15,9 @@ const NavbarBack: React.FC<NavbarBackProps> = () => {
     }
   };
   return (
-    <div className="w-full px-6 py-4 flex flex-row justify-between items-center bg-[#F1F2F6] left-0 fixed z-50">
+    <div
+      className={`w-full px-6 py-4 flex flex-row justify-between items-center bg-[#F1F2F6] left-0 fixed z-50 ${className}`}
+    >
       <button onClick={handleBack}>
         <Image
           src={"/imgs/create-account-imgs/back-btn.svg"}

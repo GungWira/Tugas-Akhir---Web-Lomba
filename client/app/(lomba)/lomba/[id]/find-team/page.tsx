@@ -130,10 +130,10 @@ export default function FindTeam({
   };
 
   return (
-    <div className="relative flex flex-col justify-start items-start w-full min-h-screen overflow-hidden">
+    <div className="relative flex flex-col justify-start items-center w-full min-h-screen md:min-h-0 overflow-hidden">
       <NavbarBackTitled>Cari Anggota Tim</NavbarBackTitled>
 
-      <div className="flex flex-col justify-start items-start p-6 py-8 gap-2 mt-24 w-full bg-[#F1F2F6] min-h-screen rounded-3xl z-50">
+      <div className="flex flex-col justify-start items-start p-6 py-8 gap-2 mt-24 w-full bg-[#F1F2F6] min-h-screen md:min-h-0 md:bg-white rounded-3xl z-50">
         {error ? (
           <p className="text-red-600 font-poppinsRegular text-sm">*{error}</p>
         ) : (
