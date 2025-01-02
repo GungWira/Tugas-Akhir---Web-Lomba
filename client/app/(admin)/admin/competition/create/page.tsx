@@ -24,11 +24,12 @@ export default function FindTeam() {
   }, [user, router]);
 
   const [formData, setFormData] = useState({
-    namaLomba: "",
-    kategoriLomba: "",
-    tipeLomba: "",
-    deskripsi: "",
-    tanggalTerakhir: "",
+    title: "",
+    category: "",
+    type: "Team",
+    description: "",
+    level: "Provinsi",
+    endDate: "",
     linkPendaftaran: "",
     linkGuidebook: "",
     poster: null as File | null,
@@ -52,24 +53,28 @@ export default function FindTeam() {
     e.preventDefault();
 
     const {
-      namaLomba,
-      kategoriLomba,
-      tipeLomba,
-      deskripsi,
-      tanggalTerakhir,
+      title,
+      category,
+      type,
+      description,
+      level,
+      endDate,
       linkPendaftaran,
       linkGuidebook,
+      poster,
     } = formData;
 
-    // Validasi input
+    // Validasi input termasuk poster
     if (
-      !namaLomba ||
-      !kategoriLomba ||
-      !tipeLomba ||
-      !deskripsi ||
-      !tanggalTerakhir ||
+      !title ||
+      !category ||
+      !type ||
+      !description ||
+      !level ||
+      !endDate ||
       !linkPendaftaran ||
-      !linkGuidebook
+      !linkGuidebook ||
+      !poster
     ) {
       setError("Harap isi semua field yang wajib diisi!");
       return;
@@ -79,25 +84,26 @@ export default function FindTeam() {
     setError(null);
     setSuccess(null);
 
-    const postData = {
-      namaLomba,
-      kategoriLomba,
-      tipeLomba,
-      deskripsi,
-      tanggalTerakhir,
-      linkPendaftaran,
-      linkGuidebook,
-    };
+    // Buat FormData object
+    const formDataObj = new FormData();
+    formDataObj.append("title", title);
+    formDataObj.append("category", category);
+    formDataObj.append("type", type);
+    formDataObj.append("description", description);
+    formDataObj.append("level", level);
+    formDataObj.append("startDate", new Date().toISOString());
+    formDataObj.append("endDate", new Date(endDate).toISOString());
+    formDataObj.append("linkPendaftaran", linkPendaftaran);
+    formDataObj.append("linkGuidebook", linkGuidebook);
+    formDataObj.append("poster", poster);
 
     try {
       const response = await fetch(
         `https://lomba-backend.vercel.app/admin/competition/create`,
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(postData),
+          body: formDataObj,
+          credentials: "include",
         }
       );
 
@@ -109,11 +115,12 @@ export default function FindTeam() {
 
       setSuccess("Data berhasil dikirim!");
       setFormData({
-        namaLomba: "",
-        kategoriLomba: "",
-        tipeLomba: "",
-        deskripsi: "",
-        tanggalTerakhir: "",
+        title: "",
+        category: "",
+        type: "Team",
+        description: "",
+        level: "Provinsi",
+        endDate: "",
         linkPendaftaran: "",
         linkGuidebook: "",
         poster: null,
@@ -158,10 +165,10 @@ export default function FindTeam() {
             </label>
             <input
               type="text"
-              id="namaLomba"
-              name="namaLomba"
+              id="title"
+              name="title"
               placeholder="Nama Lomba"
-              value={formData.namaLomba}
+              value={formData.title}
               onChange={handleChange}
               className="mt-1 block w-full px-3 py-2 rounded-md font-poppinsRegular text-base bg-[#F1F2F6] text-normalText focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               required
@@ -178,10 +185,10 @@ export default function FindTeam() {
             </label>
             <input
               type="text"
-              id="kategoriLomba"
-              name="kategoriLomba"
+              id="category"
+              name="category"
               placeholder="Kategori Lomba"
-              value={formData.kategoriLomba}
+              value={formData.category}
               onChange={handleChange}
               className="mt-1 block w-full px-3 py-2 rounded-md font-poppinsRegular text-base bg-[#F1F2F6] text-normalText focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               required
@@ -197,15 +204,37 @@ export default function FindTeam() {
               Tipe Lomba
             </label>
             <select
-              id="tipeLomba"
-              name="tipeLomba"
-              value={formData.tipeLomba}
+              id="type"
+              name="type"
+              value={formData.type}
               onChange={handleChange}
               className="mt-1 block w-full px-3 py-2 rounded-md font-poppinsRegular text-base bg-[#F1F2F6] text-normalText focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               required
             >
-              <option value="tim">Tim</option>
-              <option value="individu">Individu</option>
+              <option value="Team">Team</option>
+              <option value="Individu">Individu</option>
+            </select>
+          </div>
+
+          {/* Level Lomba */}
+          <div className="mb-4">
+            <label
+              htmlFor="level"
+              className="block text-base font-poppinsMedium text-normalText"
+            >
+              Level Lomba
+            </label>
+            <select
+              id="level"
+              name="level"
+              value={formData.level}
+              onChange={handleChange}
+              className="mt-1 block w-full px-3 py-2 rounded-md font-poppinsRegular text-base bg-[#F1F2F6] text-normalText focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              required
+            >
+              <option value="Provinsi">Provinsi</option>
+              <option value="Nasional">Nasional</option>
+              <option value="Internasional">Internasional</option>
             </select>
           </div>
 
@@ -219,9 +248,9 @@ export default function FindTeam() {
             </label>
             <textarea
               id="deskripsi"
-              name="deskripsi"
+              name="description"
               placeholder="Deskripsi"
-              value={formData.deskripsi}
+              value={formData.description}
               onChange={handleChange}
               className="mt-1 block w-full px-3 py-2 rounded-md font-poppinsRegular text-base bg-[#F1F2F6] text-normalText focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               rows={8}
@@ -239,10 +268,10 @@ export default function FindTeam() {
             </label>
             <input
               type="date"
-              id="tanggalTerakhir"
+              id="endDate"
               placeholder="Tanggal Terakhir"
-              name="tanggalTerakhir"
-              value={formData.tanggalTerakhir}
+              name="endDate"
+              value={formData.endDate}
               onChange={handleChange}
               className="mt-1 block w-full px-3 py-2 rounded-md font-poppinsRegular text-base bg-[#F1F2F6] text-normalText focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               required
@@ -289,14 +318,14 @@ export default function FindTeam() {
             />
           </div>
           {/* Upload Poster */}
-          <div className="mb-4">
+          <div className="mb-4 w-full">
             <label
               htmlFor="poster"
               className="block text-base font-poppinsMedium text-normalText"
             >
               Poster Lomba
             </label>
-            <div className="w-fit relative h-auto">
+            <div className="w-full relative h-auto">
               <input
                 type="file"
                 id="poster"

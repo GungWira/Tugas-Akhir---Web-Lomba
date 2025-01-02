@@ -41,6 +41,16 @@ export default function CreateAccount() {
       ) {
         if (isTermsAccepted) {
           if (password == passwordConfirm) {
+            if (nim.length != 10) {
+              setError("NIM tidak valid ");
+              setLoading(false);
+              return;
+            }
+            if (password.length <= 9) {
+              setError("Password harus lebih dari 9 karakter");
+              setLoading(false);
+              return;
+            }
             const response = await fetch(
               "https://lomba-backend.vercel.app/auth/signup",
               {
@@ -313,13 +323,16 @@ export default function CreateAccount() {
             </label>
           </div>
           <button
-            className={`bg-blueSec w-full p-2 text-white font-poppinsMedium mt-4 rounded-lg ${
-              loading ? "bg-[#D9D9D9]" : ""
+            className={`bg-blueSec w-full flex flex-row justify-center items-center gap-2 p-2 text-white font-poppinsMedium mt-4 rounded-lg ${
+              loading ? "opacity-70" : ""
             }`}
             type="submit"
             disabled={loading}
           >
-            Buat Akun
+            {loading && (
+              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+            )}
+            {loading ? "Loading..." : "Buat Akun"}
           </button>
           <p className="font-poppinsRegular text-sm text-[#1d1d1d] text-center mt-2 w-full">
             Sudah punya akun?

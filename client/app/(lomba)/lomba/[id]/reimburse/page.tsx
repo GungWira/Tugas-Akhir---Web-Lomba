@@ -118,7 +118,7 @@ export default function Reimburse({
             type="text"
             value={recipientName}
             onChange={(e) => setRecipientName(e.target.value)}
-            className="w-full mt-2 p-3 border rounded-lg outline-none focus:ring-2 focus:ring-blueSec font-poppinsRegular"
+            className="w-full mt-2 p-3 border rounded-lg outline-none focus:ring-2 focus:ring-blueSec focus:border-blueSec font-poppinsRegular"
             placeholder="Masukkan nama penerima"
           />
         </div>
@@ -130,7 +130,7 @@ export default function Reimburse({
           <select
             value={selectedBank}
             onChange={(e) => setSelectedBank(e.target.value)}
-            className="w-full mt-2 p-3 border rounded-lg outline-none focus:ring-2 focus:ring-blueSec font-poppinsRegular"
+            className="w-full mt-2 p-3 border rounded-lg outline-none focus:ring-2 focus:ring-blueSec focus:border-blueSec font-poppinsRegular"
           >
             <option value="">Pilih Bank</option>
             {bankList.map((bank) => (
@@ -149,7 +149,7 @@ export default function Reimburse({
             type="number"
             value={accountNumber}
             onChange={(e) => setAccountNumber(e.target.value)}
-            className="w-full mt-2 p-3 border rounded-lg outline-none focus:ring-2 focus:ring-blueSec font-poppinsRegular"
+            className="w-full mt-2 p-3 border rounded-lg outline-none focus:ring-2 focus:ring-blueSec focus:border-blueSec font-poppinsRegular"
             placeholder="Masukkan nomor rekening"
           />
         </div>

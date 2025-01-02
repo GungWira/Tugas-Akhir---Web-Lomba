@@ -10,6 +10,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/contexts/UserContext";
 import Footer from "@/components/Footer";
+import SideBar from "@/components/SideBar";
 
 interface Card {
   id: string;
@@ -35,6 +36,7 @@ interface Teams {
   members: [];
   name: string;
   openSlots: number;
+  endDate: string;
 }
 
 export default function Home() {
@@ -44,6 +46,7 @@ export default function Home() {
   // ANIMATION
   const [isIntroHidden, setIsIntroHidden] = useState(false);
   const [isLogin, setIsLogin] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   const [competitionCards, setCompetitionCards] = useState([]);
   const [teamCards, setTeamCards] = useState([]);
@@ -56,22 +59,29 @@ export default function Home() {
   const [nim, setNim] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   async function onLogin(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError("");
+    setIsLoading(true);
 
     try {
       if (nim && password) {
         await login({ nim, password });
-        if (user?.isLogin) {
-          setError("NIM atau password salah");
+        if (user) {
+          if (!user.isLogin) {
+            setError("NIM atau password salah");
+          } else {
+            setIsIntroHidden(true);
+          }
         } else {
-          setIsIntroHidden(true);
+          setError("NIM atau password salah");
         }
       } else {
         setError("Field tidak boleh kosong");
       }
+      setIsLoading(false);
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);
@@ -105,6 +115,7 @@ export default function Home() {
   // IF USER LOGGEDIN, FETCH DATA FOR USER
   useEffect(() => {
     if (isLogin) {
+      const currentDate = new Date();
       const fetchData = async () => {
         try {
           const responseCompetition = await fetch(
@@ -119,7 +130,14 @@ export default function Home() {
             throw new Error("Failed to fetch lomba cards");
           }
           const dataCompetition = await responseCompetition.json();
-          setCompetitionCards(dataCompetition);
+          console.log(dataCompetition);
+          const filteredCompetition = dataCompetition.filter(
+            (competition: Card) => {
+              const endDate = new Date(competition.endDate);
+              return endDate > currentDate;
+            }
+          );
+          setCompetitionCards(filteredCompetition);
 
           const responseTeam = await fetch(
             "https://lomba-backend.vercel.app/teams",
@@ -133,7 +151,15 @@ export default function Home() {
             throw new Error("Failed to fetch team cards");
           }
           const dataTeam = await responseTeam.json();
-          setTeamCards(dataTeam);
+          console.log(dataTeam);
+          // Filter tim berdasarkan slot terbuka dan tanggal akhir lomba belum lewat
+          const filteredTeams = dataTeam.filter((team: Teams) => {
+            const endDate = new Date(team.competition.endDate);
+            return team.openSlots > 0 && endDate > currentDate;
+          });
+          const dataTeamFiltered = filteredTeams;
+
+          setTeamCards(dataTeamFiltered);
         } catch (err: unknown) {
           if (err instanceof Error) {
             setError(err.message);
@@ -174,6 +200,8 @@ export default function Home() {
             isIntroHidden ? "animate-animateNavDown" : ""
           }`}
           style={{ animationDelay: `1350ms` }}
+          onClick={() => setIsOpen(!isOpen)}
+          isAdmin={false}
         ></NavbarLogin>
       ) : (
         <div className="hidden"></div>
@@ -340,10 +368,16 @@ export default function Home() {
               </div>
               {/* SUBMIT */}
               <button
-                className={`bg-blueSec w-full p-2 text-white font-poppinsMedium mt-4 rounded-lg`}
+                className={`bg-blueSec w-full p-2 text-white font-poppinsMedium mt-4 rounded-lg flex justify-center items-center gap-2 ${
+                  isLoading ? "opacity-70" : ""
+                }`}
                 type="submit"
+                disabled={isLoading}
               >
-                Masuk
+                {isLoading && (
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                )}
+                {isLoading ? "Loading..." : "Masuk"}
               </button>
               <p className="font-poppinsRegular text-sm text-[#1d1d1d] text-center mt-2 w-full">
                 Belum punya akun?
@@ -502,14 +536,17 @@ export default function Home() {
                 </div>
                 <Link
                   href={"/tim"}
-                  className="text-base underline font-poppinsMedium text-normalText my-1 w-full justify-end items-end text-right hidden sm:flex"
+                  className="text-base font-poppinsMedium text-normalText my-1 w-full justify-end items-center text-right hidden sm:flex"
                 >
-                  Lihat Semua
+                  <Button className="max-w-fit px-8 text-sm sm:mt-0">
+                    Lihat Semua
+                  </Button>
                 </Link>
               </div>
 
               <div className="flex flex-col justify-center items-center w-full">
                 {teamCards.length == 0 ? (
+                  // HEREEE
                   <div className="flex flex-col justify-center items-center gap-4 w-full rounded-xl min-h-64 bg-white">
                     <div className="w-12 relative">
                       <Image
@@ -541,7 +578,7 @@ export default function Home() {
                             {team.name}
                           </h2>
                           <div className="px-3 py-1 text-xs bg-blueSec font-poppinsRegular text-white rounded-full">
-                            {handleDate(team.competition.endDate)}
+                            {handleDate(team.endDate)}
                           </div>
                         </div>
                         <p className="font-poppinsRegular text-sm text-normalText opacity-40">
@@ -618,6 +655,11 @@ export default function Home() {
           <Footer></Footer>
         </div>
       )}
+      <SideBar
+        isAdmin={false}
+        isOpen={isOpen}
+        onClick={() => setIsOpen(!isOpen)}
+      ></SideBar>
     </div>
   );
 }

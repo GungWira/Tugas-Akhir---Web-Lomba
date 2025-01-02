@@ -6,6 +6,36 @@ import { useUser } from "@/contexts/UserContext";
 import Image from "next/image";
 import Link from "next/link";
 import Button from "@/components/Button";
+
+interface UserReimburse {
+  cardNumber: string;
+  competition: {
+    id: string;
+    title: string;
+    leader: {
+      id: string;
+      student_id: string;
+    };
+    members: [
+      {
+        id: string;
+        name: string;
+        profile: string;
+        student_id: string;
+      }
+    ];
+  };
+  competitionId: string;
+  createdAt: string;
+  id: string;
+  name: string;
+  receiptUrl: string;
+  status: string;
+  bankName: string;
+  updatedAt: string;
+  userId: string;
+}
+
 export default function ReimbursePage({
   params,
 }: {
@@ -14,6 +44,10 @@ export default function ReimbursePage({
   const { user } = useUser();
   const router = useRouter();
   const [slug, setSlug] = useState<string | null>(null);
+  const [status, setStatus] = useState<string | null>(null);
+  const [reimburseData, setReimburseData] = useState<UserReimburse | null>(
+    null
+  );
 
   useEffect(() => {
     const getSlug = async () => {
@@ -23,9 +57,93 @@ export default function ReimbursePage({
     getSlug();
   }, [params]);
 
+  useEffect(() => {
+    const getReimburse = async () => {
+      try {
+        if (slug) {
+          const response = await fetch(
+            `https://lomba-backend.vercel.app/admin/reimburse/${slug}`,
+            {
+              method: "GET",
+              credentials: "include",
+            }
+          );
+          const data = await response.json();
+          console.log(data);
+          setReimburseData(data);
+          setStatus(data.status);
+        }
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          console.log(error.message);
+        }
+      }
+    };
+    getReimburse();
+  }, [slug]);
+
+  useEffect(() => {
+    const getReimburse = async () => {
+      try {
+        if (slug && status && status == "PENDING") {
+          const response = await fetch(
+            `https://lomba-backend.vercel.app/admin/reimburse/${slug}/process`,
+            {
+              method: "POST",
+              credentials: "include",
+            }
+          );
+          if (!response.ok) throw new Error("Gagal process");
+          setStatus("PROCESS");
+        }
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          console.log(error.message);
+        }
+      }
+    };
+    getReimburse();
+  }, [slug, status]);
+
   if (user?.role == "UNROLE") {
     router.push("/");
   }
+
+  const handleApprove = async () => {
+    try {
+      const response = await fetch(
+        `https://lomba-backend.vercel.app/admin/reimburse/${slug}/approve`,
+        {
+          method: "POST",
+          credentials: "include",
+        }
+      );
+      if (!response.ok) throw new Error("Gagal approve");
+      setStatus("APPROVED");
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.log(error.message);
+      }
+    }
+  };
+
+  const handleReject = async () => {
+    try {
+      const response = await fetch(
+        `https://lomba-backend.vercel.app/admin/reimburse/${slug}/reject`,
+        {
+          method: "POST",
+          credentials: "include",
+        }
+      );
+      if (!response.ok) throw new Error("Gagal reject");
+      setStatus("REJECTED");
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.log(error.message);
+      }
+    }
+  };
 
   return (
     <div className="w-full h-screen flex justify-start items-start">
@@ -44,7 +162,7 @@ export default function ReimbursePage({
               <div className="w-12 aspect-square rounded-full overflow-hidden">
                 <Image
                   src={
-                    user?.imageUrl ||
+                    reimburseData?.competition.members[0].profile ||
                     "/imgs/dashboard-imgs/Default-Profile-Img.svg"
                   }
                   alt="Profile"
@@ -55,17 +173,17 @@ export default function ReimbursePage({
               </div>
               <div className="flex flex-col justify-start items-start gap-0">
                 <p className="font-poppinsSemiBold text-base text-normalText">
-                  Suta Radit
+                  {reimburseData?.competition.members[0].name}
                 </p>
                 <p className="font-poppinsMedium text-xs text-normalText opacity-80">
-                  {user?.nim}
+                  {reimburseData?.competition.leader.student_id}
                 </p>
               </div>
             </div>
           </div>
           {/* COMPETITION */}
           <Link
-            href={`/admin/competition/${slug}`}
+            href={`/admin/competition/${reimburseData?.competitionId}`}
             className="flex flex-col justify-start items-start w-full gap-1"
           >
             <p className="font-poppinsSemiBold text-base text-normalText">
@@ -73,7 +191,7 @@ export default function ReimbursePage({
             </p>
             <div className="w-full border border-[#DDDDDD] rounded-lg px-6 py-3 flex flex-row justify-start items-center gap-1">
               <p className="font-poppinsMedium text-sm text-blueSec">
-                Nama Lomba
+                {reimburseData?.competition.title}
               </p>
               <div className="w-4 aspect-square overflow-hidden flex justify-center items-center">
                 <Image
@@ -95,36 +213,46 @@ export default function ReimbursePage({
               </p>
             </div>
             {/* CARD ANGGOTA TEAM */}
-            <div className="w-full rounded-lg border border-[#DDDDDD] flex flex-row justify-between items-center px-4 py-2">
-              <div className="flex flex-row justify-start items-center gap-2">
-                <div className="w-10 aspect-square rounded-full overflow-hidden">
-                  <Image
-                    src={"/imgs/dashboard-imgs/Default-Profile-Img.svg"}
-                    alt="Profile"
-                    width={100}
-                    height={100}
-                    className="w-full"
-                  />
+            {reimburseData?.competition.members.map((member, index) => (
+              <div
+                key={index}
+                className="w-full rounded-lg border border-[#DDDDDD] flex flex-row justify-between items-center px-4 py-2"
+              >
+                <div className="flex flex-row justify-start items-center gap-2">
+                  <div className="w-10 aspect-square rounded-full overflow-hidden">
+                    <Image
+                      src={
+                        reimburseData.competition.members[index].profile ||
+                        "/imgs/dashboard-imgs/Default-Profile-Img.svg"
+                      }
+                      alt="Profile"
+                      width={100}
+                      height={100}
+                      className="w-full"
+                    />
+                  </div>
+                  <div className="flex flex-col justify-start items-start gap-0">
+                    <p className="font-poppinsSemiBold text-sm text-normalText">
+                      {member.name}
+                    </p>
+                    <p className="font-poppinsMedium text-xs text-normalText opacity-80">
+                      {member.student_id}
+                    </p>
+                  </div>
                 </div>
-                <div className="flex flex-col justify-start items-start gap-0">
-                  <p className="font-poppinsSemiBold text-sm text-normalText">
-                    Suta Radit
-                  </p>
-                  <p className="font-poppinsMedium text-xs text-normalText opacity-80">
-                    {user?.nim}
-                  </p>
-                </div>
+                {index === 0 && (
+                  <div className="w-6 aspect-square overflow-hidden">
+                    <Image
+                      src={"/imgs/dashboard-imgs/crown.svg"}
+                      alt="Icon"
+                      width={100}
+                      height={100}
+                      className="w-full"
+                    />
+                  </div>
+                )}
               </div>
-              <div className="w-6 aspect-square overflow-hidden">
-                <Image
-                  src={"/imgs/dashboard-imgs/crown.svg"}
-                  alt="Icon"
-                  width={100}
-                  height={100}
-                  className="w-full"
-                />
-              </div>
-            </div>
+            ))}
           </div>
           {/* BANK DATA */}
           <div className="flex flex-col justify-start items-start w-full gap-4">
@@ -135,7 +263,7 @@ export default function ReimbursePage({
               </p>
               <div className="w-full border border-[#DDDDDD] rounded-lg px-6 py-3 flex flex-row justify-start items-center gap-1">
                 <p className="font-poppinsMedium text-sm text-normalText">
-                  Suta Radit
+                  {reimburseData?.name}
                 </p>
               </div>
             </div>
@@ -146,7 +274,7 @@ export default function ReimbursePage({
               </p>
               <div className="w-full border border-[#DDDDDD] rounded-lg px-6 py-3 flex flex-row justify-start items-center gap-1">
                 <p className="font-poppinsMedium text-sm text-normalText">
-                  BNI
+                  {reimburseData?.bankName}
                 </p>
               </div>
             </div>
@@ -157,7 +285,7 @@ export default function ReimbursePage({
               </p>
               <div className="w-full border border-[#DDDDDD] rounded-lg px-6 py-3 flex flex-row justify-start items-center gap-1">
                 <p className="font-poppinsMedium text-sm text-normalText">
-                  1234567890
+                  {reimburseData?.cardNumber}
                 </p>
               </div>
             </div>
@@ -169,7 +297,10 @@ export default function ReimbursePage({
               </p>
               <div className="w-full border border-[#DDDDDD] rounded-lg flex flex-row justify-start items-center gap-1 aspect-video overflow-hidden">
                 <Image
-                  src={"/imgs/dashboard-imgs/Default-Profile-Img.svg"}
+                  src={
+                    reimburseData?.receiptUrl ||
+                    "/imgs/dashboard-imgs/Default-Profile-Img.svg"
+                  }
                   alt="Evidence"
                   width={100}
                   height={100}
@@ -179,13 +310,43 @@ export default function ReimbursePage({
             </div>
           </div>
           {/* BUTTON */}
-          <div className="w-full flex flex-row justify-end items-center gap-2">
-            <Button>Setujui</Button>
+          <div
+            className={`w-full flex flex-row justify-end items-center gap-2 ${
+              status ? "flex" : "hidden"
+            }`}
+          >
             <Button
-              className="bg-[#F1F2F6] text-normalText"
+              onClick={handleApprove}
+              className={`${
+                status == "PENDING" || status == "PROCESS" ? "flex" : "hidden"
+              }`}
+            >
+              Setujui
+            </Button>
+            <Button
+              onClick={handleReject}
+              className={`bg-[#F1F2F6] text-normalText ${
+                status == "PENDING" || status == "PROCESS" ? "flex" : "hidden"
+              }`}
               style={{ backgroundColor: "#F1F2F6", color: "#101010" }}
             >
               Tolak
+            </Button>
+            <Button
+              className={`${
+                status ? (status == "APPROVED" ? "" : "hidden") : "hidden"
+              } bg-green-700`}
+              isDisabled={true}
+            >
+              Disetujui
+            </Button>
+            <Button
+              className={`${
+                status ? (status == "REJECTED" ? "" : "hidden") : "hidden"
+              } bg-red-700`}
+              isDisabled={true}
+            >
+              Ditolak
             </Button>
           </div>
         </div>

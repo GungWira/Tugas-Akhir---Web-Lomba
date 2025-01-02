@@ -178,8 +178,7 @@ export default function DetailTeam({
             "Gagal mengikuti tim. Mohon mencoba beberapa saat lagi"
           );
         }
-        const data = await response.json();
-        return data;
+        router.refresh();
       } else {
         setError("Gagal mengikuti tim. Mohon mencoba beberapa saat lagi");
       }
@@ -214,6 +213,20 @@ export default function DetailTeam({
           );
         const data = await response.json();
         setTeam(data.updatedTeam);
+
+        const responses = await fetch(
+          `https://lomba-backend.vercel.app/notification/${user.id}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            credentials: "include",
+          }
+        );
+        if (!responses.ok) throw new Error("Gagal mengambil data notifikasi");
+        const datas = await responses.json();
+        setNotificationList(datas.notifications);
       } else {
         setError("Gagal mengikuti tim. Mohon mencoba beberapa saat lagi");
       }
@@ -246,6 +259,20 @@ export default function DetailTeam({
           throw new Error(
             "Gagal menambahkan anggota. Mohon mencoba beberapa saat lagi"
           );
+        // FETCH ULANG DATA USER
+        const responses = await fetch(
+          `https://lomba-backend.vercel.app/notification/${user.id}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            credentials: "include",
+          }
+        );
+        if (!responses.ok) throw new Error("Gagal mengambil data notifikasi");
+        const data = await responses.json();
+        setNotificationList(data.notifications);
       } else {
         setError("Gagal mengikuti tim. Mohon mencoba beberapa saat lagi");
       }
@@ -264,7 +291,7 @@ export default function DetailTeam({
           {
             method: "POST",
             body: JSON.stringify({
-              userId: user.id,
+              leaderId: user.id,
             }),
             headers: {
               "Content-Type": "application/json",
@@ -325,8 +352,10 @@ export default function DetailTeam({
                 <div className="w-10 aspect-square rounded-full overflow-hidden">
                   <Image
                     src={`${
-                      team?.leader.profile ||
-                      "/imgs/dashboard-imgs/Default-Profile-Img.svg"
+                      team
+                        ? team.leader.profile ||
+                          "/imgs/dashboard-imgs/Default-Profile-Img.svg"
+                        : "/imgs/dashboard-imgs/Default-Profile-Img.svg"
                     }`}
                     alt="User Profile"
                     width={1}
@@ -400,7 +429,7 @@ export default function DetailTeam({
                       </div>
                       <div className="flex flex-col justify-center items-start">
                         <p className="participant_name font-poppinsMedium text-normalText text-base">
-                          {member.name}
+                          {member.id == user?.id ? "Anda" : member.name}
                         </p>
                         <p className="participant_title font-poppinsMedium text-normalText text-xs opacity-60">
                           Anggota
@@ -464,7 +493,7 @@ export default function DetailTeam({
             )}
           </div>
           {/* LEADER ONLY */}
-          <div className="flex flex-col justify-start items-start gap-2 mt-2">
+          <div className="flex flex-col justify-start items-start gap-2 mt-2 w-full">
             {notificationList.map((notif: Notification) => (
               <div
                 className="card_participant w-full bg-white px-4 py-3 rounded-md flex flex-row justify-between items-center gap-3"
@@ -548,7 +577,7 @@ export default function DetailTeam({
                     Pemberitahuan!
                   </p>
                   <p className="text-white font-poppinsRegular text-sm">
-                    {`Anda memiliki ${notificationList.length} calong anggota baru`}
+                    {`Anda memiliki ${notificationList.length} calon anggota baru`}
                   </p>
                 </div>
               </div>
@@ -568,7 +597,7 @@ export default function DetailTeam({
             {/* CARD HIRING */}
             {notificationList.map((notif: Notification) => (
               <div
-                className="card_participant w-full bg-white px-4 py-3 rounded-md flex flex-row justify-between items-center gap-3"
+                className={`card_participant w-full bg-white px-4 py-3 rounded-md flex flex-row justify-between items-center gap-3 md:hidden`}
                 key={notif.id}
               >
                 <div className="flex flex-row justify-start items-center w-full gap-2">
@@ -757,7 +786,7 @@ export default function DetailTeam({
                           </div>
                           <div className="flex flex-col justify-center items-start">
                             <p className="participant_name font-poppinsMedium text-normalText text-base">
-                              {member.name}
+                              {member.id == user?.id ? "Anda" : member.name}
                             </p>
                             <p className="participant_title font-poppinsMedium text-normalText text-xs opacity-60">
                               Anggota
@@ -900,7 +929,9 @@ export default function DetailTeam({
                       leader
                         ? "hidden"
                         : team?.openSlots || 0 > 0
-                        ? ""
+                        ? team?.member.some((member) => member.id === user?.id)
+                          ? "hidden"
+                          : ""
                         : "hidden"
                     }`}
                     onClick={handlerJoin}

@@ -28,6 +28,7 @@ export default function Lomba() {
   const [error, setError] = useState<string | null>();
 
   useEffect(() => {
+    const currentDate = new Date();
     const fetchData = async () => {
       try {
         const responseCompetition = await fetch(
@@ -42,11 +43,17 @@ export default function Lomba() {
           throw new Error("Failed to fetch lomba cards");
         }
         const dataCompetition = await responseCompetition.json();
-        if (dataCompetition.length == 0) {
+        const filteredCompetitions = dataCompetition.filter(
+          (competition: Card) => {
+            const endDate = new Date(competition.endDate);
+            return endDate > currentDate;
+          }
+        );
+        if (filteredCompetitions.length == 0) {
           router.push("/");
           return;
         }
-        setCompetitionCards(dataCompetition);
+        setCompetitionCards(filteredCompetitions);
         setLoading(false);
       } catch (err: unknown) {
         if (err instanceof Error) {

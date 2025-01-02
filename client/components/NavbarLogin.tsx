@@ -9,9 +9,16 @@ import Link from "next/link";
 type NavbarLoginProps = {
   className?: string;
   style?: React.CSSProperties;
+  isAdmin?: boolean;
+  onClick?: () => void;
 };
 
-const NavbarLogin: React.FC<NavbarLoginProps> = ({ className = "", style }) => {
+const NavbarLogin: React.FC<NavbarLoginProps> = ({
+  className = "",
+  style,
+  isAdmin,
+  onClick,
+}) => {
   const { user } = useUser();
   const router = useRouter();
 
@@ -33,6 +40,7 @@ const NavbarLogin: React.FC<NavbarLoginProps> = ({ className = "", style }) => {
         <button
           typeof="button"
           className="w-12 h-12 bg-transparent overflow-hidden sm:hidden"
+          onClick={onClick}
         >
           <Image
             src={"/imgs/dashboard-imgs/Sidebar-Button.svg"}
@@ -63,7 +71,11 @@ const NavbarLogin: React.FC<NavbarLoginProps> = ({ className = "", style }) => {
           </h1>
         </div>
 
-        <div className="flex-row gap-8 justify-center items-center hidden sm:flex">
+        <div
+          className={`flex-row gap-8 justify-center items-center hidden sm:flex ${
+            isAdmin ? "sm:hidden" : ""
+          }`}
+        >
           <Link
             href={"/"}
             className="font-poppinsRegular text-normalText text-base flex-1"
@@ -81,6 +93,24 @@ const NavbarLogin: React.FC<NavbarLoginProps> = ({ className = "", style }) => {
             className="font-poppinsRegular text-normalText text-base flex-1"
           >
             Tim
+          </Link>
+        </div>
+        <div
+          className={`flex-row gap-8 justify-center items-center hidden ${
+            isAdmin ? "sm:flex" : "sm:hidden"
+          }`}
+        >
+          <Link
+            href={"/admin"}
+            className="font-poppinsRegular text-normalText text-base flex-1"
+          >
+            Dashboard
+          </Link>
+          <Link
+            href={"/admin/competition"}
+            className="font-poppinsRegular text-normalText text-base flex-1"
+          >
+            Publish
           </Link>
         </div>
 

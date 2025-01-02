@@ -1,7 +1,10 @@
-import React from "react";
+"use client";
+
+import React, { useMemo, useState } from "react";
 import Image from "next/image";
 import Button from "./Button";
 import { useUser } from "@/contexts/UserContext";
+import { useEffect } from "react";
 
 type TeamCardProps = {
   id: string;
@@ -32,15 +35,50 @@ const TeamCard: React.FC<TeamCardProps> = ({
   userId,
 }) => {
   const { user } = useUser();
+  const [isPublished, setIsPublished] = useState(true);
 
-  const newDate = new Date(endDate);
+  const newDate = useMemo(() => new Date(endDate), [endDate]);
   const formattedDate = newDate.toLocaleDateString("id-ID", {
     day: "numeric",
     month: "long",
   });
+
+  useEffect(() => {
+    const stopPublish = async () => {
+      if (id && userId) {
+        await fetch(
+          `https://lomba-backend.vercel.app/teams/${id}/stopPublication`,
+          {
+            method: "POST",
+            body: JSON.stringify({
+              leaderId: userId,
+            }),
+            headers: {
+              "Content-Type": "application/json",
+            },
+            credentials: "include",
+          }
+        );
+        setIsPublished(false);
+      }
+    };
+    const currentDate = new Date();
+
+    if (newDate < currentDate) {
+      stopPublish();
+    }
+  }, [id, userId, newDate]);
   return (
     <div
-      className={`card w-full rounded-lg px-4 py-6 sm:rounded-xl flex flex-col gap-3 bg-white ${className}`}
+      className={`card w-full rounded-lg px-4 py-6 sm:rounded-xl flex-col gap-3 bg-white ${className} ${
+        isPublished
+          ? "flex"
+          : user
+          ? user.id == userId
+            ? "flex"
+            : "hidden"
+          : "hidden"
+      }`}
       key={id}
       onClick={onClick}
     >

@@ -6,16 +6,25 @@ import Image from "next/image";
 import Link from "next/link";
 import { useUser } from "@/contexts/UserContext";
 import { useRouter } from "next/navigation";
+import SideBar from "@/components/SideBar";
+
 interface Notification {
   id: number;
   name: string;
-  description: string;
-  date: string;
+  updatedAt: string;
   status: string;
+}
+
+interface Reimburse {
+  approvedReimburses: { count: number; data: [] };
+  rejectedReimburses: { count: number; data: [] };
+  totalReimburses: number;
 }
 
 export default function AdminPage() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [reimburseData, setReimburseData] = useState<Reimburse>();
+  const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const { user } = useUser();
@@ -24,9 +33,13 @@ export default function AdminPage() {
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const response = await fetch("/api/notifications");
+        const response = await fetch("https://lomba-backend.vercel.app/admin", {
+          method: "GET",
+          credentials: "include",
+        });
         const data = await response.json();
-        setNotifications(data);
+        setReimburseData(data);
+        setNotifications(data.latestReimburses.data);
         setLoading(false);
       } catch (error: unknown) {
         if (error instanceof Error) {
@@ -48,7 +61,10 @@ export default function AdminPage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-[#F1F2F6] w-full justify-start items-start">
-      <NavbarLogin></NavbarLogin>
+      <NavbarLogin
+        isAdmin={true}
+        onClick={() => setIsOpen(!isOpen)}
+      ></NavbarLogin>
       <div className="mt-24 flex flex-col justify-start items-start px-4 w-full gap-5">
         {/* TITLE */}
         <div className="flex flex-col justify-start items-start gap-1">
@@ -66,21 +82,27 @@ export default function AdminPage() {
             <p className="font-poppinsRegular text-xs text-white opacity-80">
               Total Pengajuan Reimburse
             </p>
-            <h2 className="font-poppinsSemiBold text-lg text-white">100</h2>
+            <h2 className="font-poppinsSemiBold text-lg text-white">
+              {reimburseData ? reimburseData.totalReimburses : 0}
+            </h2>
           </div>
           {/* DETAIL CARD REIMBURSE APPROVED*/}
           <div className="w-full rounded-md bg-white flex flex-col justify-start items-start gap-1 p-4">
             <p className="font-poppinsRegular text-xs text-normalText opacity-80">
               Total Pengajuan Reimburse yang Disetujui
             </p>
-            <h2 className="font-poppinsSemiBold text-lg text-normalText">29</h2>
+            <h2 className="font-poppinsSemiBold text-lg text-normalText">
+              {reimburseData ? reimburseData.approvedReimburses.count : 0}
+            </h2>
           </div>
           {/* DETAIL CARD REIMBURSE REJECTED*/}
           <div className="w-full rounded-md bg-white flex flex-col justify-start items-start gap-1 p-4">
             <p className="font-poppinsRegular text-xs text-normalText opacity-80">
               Total Pengajuan Reimburse yang Ditolak
             </p>
-            <h2 className="font-poppinsSemiBold text-lg text-normalText">1</h2>
+            <h2 className="font-poppinsSemiBold text-lg text-normalText">
+              {reimburseData ? reimburseData.rejectedReimburses.count : 0}
+            </h2>
           </div>
         </div>
         {/* NOTIFICATIONS */}
@@ -118,12 +140,12 @@ export default function AdminPage() {
                 Terjadi kesalahan saat mengambil data
               </p>
             </div>
-          ) : (
+          ) : notifications.length != 0 ? (
             <div className="w-full flex flex-col justify-start items-center gap-3 bg-white rounded-md p-4 aspect-video">
               {/* CARD REIMBURSE */}
               {notifications.map((notification, index) => (
                 <Link
-                  href={`/admin/reimburse/${notification.id}`}
+                  href={`/admin/${notification.id}`}
                   className="w-full border border-[#DDDDDD] rounded-md flex flex-row justify-between items-center px-4 py-3"
                   key={index}
                 >
@@ -132,21 +154,67 @@ export default function AdminPage() {
                       {notification.name}
                     </h3>
                     <p className="font-poppinsRegular text-xs text-normalText opacity-80">
-                      {notification.description}
+                      Mengajukan reimburse
                     </p>
                   </div>
                   <div className="flex flex-col justify-center items-center gap-1">
-                    <div className="w-2 aspect-square rounded-full bg-blueSec"></div>
+                    <div
+                      className={`w-2 aspect-square rounded-full ${
+                        notification.status == "PENDING"
+                          ? "bg-blueSec"
+                          : notification.status == "APPROVED"
+                          ? "bg-green-600"
+                          : notification.status == "REJECTED"
+                          ? "bg-red-600"
+                          : "bg-yellow-500"
+                      }`}
+                    ></div>
                     <p className="font-poppinsRegular text-xs text-normalText opacity-80">
-                      {notification.date}
+                      {(() => {
+                        const now = new Date();
+                        const updated = new Date(notification.updatedAt);
+                        const diff = now.getTime() - updated.getTime();
+                        const minutes = Math.floor(diff / 60000);
+                        const hours = Math.floor(minutes / 60);
+                        const days = Math.floor(hours / 24);
+                        const months = Math.floor(days / 30);
+                        const years = Math.floor(months / 12);
+
+                        if (minutes < 1) return "baru saja";
+                        if (minutes < 60) return `${minutes}m`;
+                        if (hours < 24) return `${hours}h`;
+                        if (days < 30) return `${days}d`;
+                        if (months < 12) return `${months}mo`;
+                        return `${years}y`;
+                      })()}
                     </p>
                   </div>
                 </Link>
               ))}
             </div>
+          ) : (
+            <div className="w-full flex flex-col justify-center items-center gap-3 bg-white rounded-md p-4 aspect-video">
+              <div className="w-12 aspect-square overflow-hidden">
+                <Image
+                  src="/imgs/dashboard-imgs/No-Data-White.svg"
+                  alt="loading"
+                  width={100}
+                  height={100}
+                  layout="responsive"
+                />
+              </div>
+              <p className="font-poppinsRegular text-xs text-normalText opacity-80">
+                Belum ada pengajuan reimburse
+              </p>
+            </div>
           )}
         </div>
       </div>
+      <SideBar
+        isAdmin={true}
+        isOpen={isOpen}
+        onClick={() => setIsOpen(!isOpen)}
+      ></SideBar>
     </div>
   );
 }

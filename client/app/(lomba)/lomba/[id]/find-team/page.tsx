@@ -130,10 +130,10 @@ export default function FindTeam({
   };
 
   return (
-    <div className="relative flex flex-col justify-start items-center w-full min-h-screen md:min-h-0 overflow-hidden">
+    <div className="relative flex flex-col justify-start items-center w-full min-h-screen md:min-h-0 overflow-hidden sm:max-h-none sm:overflow-scroll">
       <NavbarBackTitled>Cari Anggota Tim</NavbarBackTitled>
 
-      <div className="flex flex-col justify-start items-start p-6 py-8 gap-2 mt-24 w-full bg-[#F1F2F6] min-h-screen md:min-h-0 md:bg-white rounded-3xl z-50">
+      <div className="flex flex-col justify-start items-start p-6 py-8 gap-2 mt-24 w-full bg-[#F1F2F6] min-h-screen md:min-h-0 md:bg-white max-w-5xl rounded-3xl z-50">
         {error ? (
           <p className="text-red-600 font-poppinsRegular text-sm">*{error}</p>
         ) : (
@@ -161,7 +161,7 @@ export default function FindTeam({
               name="namaLomba"
               value={namaLomba ? namaLomba : "-"}
               disabled
-              className="mt-1 block w-full px-3 py-2 bg-white rounded-md font-poppinsRegular text-base text-[#A6A6A6]"
+              className="mt-1 block w-full px-3 border focus:ring-blueSec focus:border-blueSec py-2 bg-white rounded-md font-poppinsRegular text-base text-[#A6A6A6]"
             />
           </div>
           {/* Nama Tim */}
@@ -178,7 +178,7 @@ export default function FindTeam({
               name="namaTim"
               value={formData.namaTim}
               onChange={handleChange}
-              className="mt-1 block w-full px-3 py-2 rounded-md font-poppinsRegular text-base text-normalText focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              className="mt-1 block w-full px-3 border focus:ring-blueSec focus:border-blueSec py-2 rounded-md font-poppinsRegular text-base text-normalText focus:outline-none "
               required
             />
           </div>
@@ -197,7 +197,7 @@ export default function FindTeam({
               name="namaKetua"
               value={formData.namaKetua}
               disabled
-              className="mt-1 block w-full px-3 py-2 bg-white rounded-md font-poppinsRegular text-base text-[#A6A6A6]"
+              className="mt-1 block w-full px-3 border focus:ring-blueSec focus:border-blueSec py-2 bg-white rounded-md font-poppinsRegular text-base text-[#A6A6A6]"
             />
           </div>
 
@@ -215,7 +215,7 @@ export default function FindTeam({
               name="nimKetua"
               value={formData.nimKetua}
               disabled
-              className="mt-1 block w-full px-3 py-2 bg-white rounded-md font-poppinsRegular text-base text-[#A6A6A6]"
+              className="mt-1 block w-full px-3 border focus:ring-blueSec focus:border-blueSec py-2 bg-white rounded-md font-poppinsRegular text-base text-[#A6A6A6]"
             />
           </div>
 
@@ -234,7 +234,7 @@ export default function FindTeam({
               onChange={handleChange}
               maxLength={300}
               required
-              className="mt-1 block w-full px-3 py-2 rounded-md font-poppinsRegular text-base text-normalText focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              className="mt-1 block w-full px-3 border focus:ring-blueSec focus:border-blueSec py-2 rounded-md font-poppinsRegular text-base text-normalText focus:outline-none "
               rows={3}
             />
             <p className="text-sm text-gray-500 mt-1">
@@ -256,7 +256,7 @@ export default function FindTeam({
               name="sisaSlot"
               value={formData.sisaSlot}
               onChange={handleChange}
-              className="mt-1 block w-full px-3 py-2 rounded-md font-poppinsRegular text-base text-normalText focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              className="mt-1 block w-full px-3 border focus:ring-blueSec focus:border-blueSec py-2 rounded-md font-poppinsRegular text-base text-normalText focus:outline-none "
               required
             />
           </div>
@@ -275,7 +275,7 @@ export default function FindTeam({
               name="tanggalTerakhir"
               value={formData.tanggalTerakhir}
               onChange={handleChange}
-              className="mt-1 block w-full px-3 py-2 rounded-md font-poppinsRegular text-base text-normalText focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              className="mt-1 block w-full px-3 border focus:ring-blueSec focus:border-blueSec py-2 rounded-md font-poppinsRegular text-base text-normalText focus:outline-none "
               required
             />
           </div>

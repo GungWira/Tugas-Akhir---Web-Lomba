@@ -12,6 +12,7 @@ export default function OTPVerification() {
   const [isResendVisible, setIsResendVisible] = useState(false);
   const inputRefs = useRef<HTMLInputElement[]>([]);
   const router = useRouter();
+  const [countdown, setCountdown] = useState(59);
 
   // Dekripsi nim dari localStorage saat komponen dimuat
   useEffect(() => {
@@ -101,7 +102,9 @@ export default function OTPVerification() {
         throw new Error("Gagal mengirim ulang OTP.");
       }
 
-      setError("Kode OTP telah dikirim ulang.");
+      setCountdown(59);
+      setIsResendVisible(false);
+      setError("");
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Terjadi kesalahan.");
     }
@@ -134,6 +137,22 @@ export default function OTPVerification() {
 
     return () => clearTimeout(timer);
   }, [nim]);
+
+  useEffect(() => {
+    if (!isResendVisible) {
+      const timer = setInterval(() => {
+        setCountdown((prev) => {
+          if (prev <= 1) {
+            clearInterval(timer);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+
+      return () => clearInterval(timer);
+    }
+  }, [isResendVisible]);
 
   return (
     <div className="container relative max-w-base min-h-screen flex justify-start items-start flex-col overflow-scroll pb-0 md:flex-row md:max-w-none md:overflow-hidden">
@@ -183,12 +202,17 @@ export default function OTPVerification() {
                   ref={(el) => {
                     inputRefs.current[index] = el!;
                   }}
-                  className="bg-white rounded-xl p-2 sm:p-4 text-base sm:text-lg text-center font-bold color-[#1d1d1d] aspect-[3/4] w-[40px] sm:w-[56px]"
+                  className="bg-white rounded-xl p-2 sm:p-4 text-base sm:text-lg font-poppinsSemiBold text-center font-bold color-[#1d1d1d] aspect-[3/4] w-[48px] sm:w-[56px]"
                   style={{ outline: "none" }}
                 />
               ))}
             </div>
-            {isResendVisible && (
+            {!isResendVisible ? (
+              <p className="text-gray-500 text-sm md:text-base font-poppinsRegular">
+                Kirim ulang OTP dalam{" "}
+                <span className="font-poppinsMedium">{countdown}</span> detik
+              </p>
+            ) : (
               <button
                 onClick={(e) => {
                   e.preventDefault();

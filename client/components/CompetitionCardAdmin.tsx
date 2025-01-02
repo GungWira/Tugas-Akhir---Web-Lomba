@@ -1,6 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import Button from "./Button";
+import { useRouter } from "next/navigation";
 
 type CompetitionCardProps = {
   id: string;
@@ -10,8 +11,8 @@ type CompetitionCardProps = {
   category: string;
   type: string;
   endDate: string | undefined;
-  onClick: () => void;
   style?: string;
+  onClick?: () => void;
 };
 
 const CompetitionCardAdmin: React.FC<CompetitionCardProps> = ({
@@ -22,16 +23,22 @@ const CompetitionCardAdmin: React.FC<CompetitionCardProps> = ({
   category,
   type,
   endDate,
-  onClick,
   style = {},
+  onClick,
 }) => {
+  const router = useRouter();
+
   return (
     <div
       className={`card w-full rounded-xl overflow-hidden flex flex-col bg-white ${style}`}
       key={id}
-      onClick={onClick}
     >
-      <div className="w-full relative overflow-hidden rounded-lg aspect-video">
+      <div
+        className="w-full relative overflow-hidden rounded-lg aspect-video"
+        onClick={() => {
+          router.push(`/admin/competition/${id}`);
+        }}
+      >
         <Image
           src={urlPoster}
           alt="Image Poster"
@@ -61,12 +68,19 @@ const CompetitionCardAdmin: React.FC<CompetitionCardProps> = ({
           {description}
         </p>
         <div className="w-full flex flex-row justify-between items-center gap-2 mt-2">
-          <Button className="mt-0 w-full" style={{ marginTop: 0 }}>
+          <Button
+            className="mt-0 w-full"
+            style={{ marginTop: 0 }}
+            onClick={() => {
+              router.push(`/admin/competition/${id}/edit`);
+            }}
+          >
             Edit
           </Button>
           <Button
-            className="mt-0 w-fit bg-transparent border border-[#C2C2C2]"
+            className="mt-0 w-fit max-w-fit bg-transparent border border-[#C2C2C2]"
             style={{ marginTop: 0 }}
+            onClick={onClick}
           >
             <div className="w-6 aspect-square overflow-hidden">
               <Image

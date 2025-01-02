@@ -107,8 +107,13 @@ export default function DetailLomba({
             }
           );
           if (!response.ok) throw new Error("Gagal memuat data");
-          const data = await response.json();
-          console.log(data);
+          const data: Card = await response.json();
+          const currentDate = new Date();
+          const endDate = new Date(data.endDate);
+          if (endDate < currentDate) {
+            router.push("/lomba");
+            return;
+          }
           setCard(data);
 
           const teamResponse = await fetch(
@@ -121,6 +126,7 @@ export default function DetailLomba({
 
           if (!teamResponse.ok) throw new Error("Gagal memuat data tim");
           const dataTeam = await teamResponse.json();
+          console.log(dataTeam);
           setCardTeam(dataTeam);
         }
       } catch (err: unknown) {
@@ -595,7 +601,9 @@ export default function DetailLomba({
                         ? "flex"
                         : "hidden"
                       : "hidden"
-                    : "flex"
+                    : card.openSlots > 0
+                    ? "flex"
+                    : "hidden"
                 }
                 onClick={() => router.push(`/tim/${card.id}`)}
               ></TeamCard>
