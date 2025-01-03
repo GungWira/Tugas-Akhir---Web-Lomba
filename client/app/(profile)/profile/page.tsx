@@ -17,6 +17,7 @@ export default function Profile() {
   const { user, update, logout } = useUser();
   const [majorList, setMajorList] = useState<[]>([]);
   const [formData, setFormData] = useState({
+    id: "",
     firstname: "",
     lastname: "",
     major: "",
@@ -27,10 +28,12 @@ export default function Profile() {
   const [loading, setLoading] = useState<boolean>(false); // State untuk loading tombol submit
   const [submitStatus, setSubmitStatus] = useState<string | null>(null); // State untuk status submit
   const [error, setError] = useState<string | null>(null);
+  const [imageFile, setImageFile] = useState<File | null>(null);
 
   useEffect(() => {
     if (user) {
       setFormData({
+        id: user.id || "",
         firstname: user.firstName || "",
         lastname: user.lastName || "",
         major: user.major || "",
@@ -55,8 +58,9 @@ export default function Profile() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      setImageFile(file);
       const fileURL = URL.createObjectURL(file);
-      setNewImage(fileURL); // Update preview gambar baru
+      setNewImage(fileURL);
     }
   };
 
@@ -71,16 +75,28 @@ export default function Profile() {
     setSubmitStatus(null);
 
     try {
-      const response = await update({
-        firstname: formData.firstname,
-        lastname: formData.lastname,
-        major: formData.major,
-        profileImage: formData.profileImage,
-        password: formData.password,
-      });
+      if (user) {
+        console.log(formData);
+        const response = await update({
+          id: formData.id,
+          firstname: formData.firstname,
+          lastname: formData.lastname,
+          major: formData.major,
+          password: formData.password,
+          profile: imageFile,
+        });
 
-      if (!response.ok) throw new Error("Gagal memperbarui data.");
-      setSubmitStatus("Data berhasil diperbarui!");
+        if (!response.ok) throw new Error("Gagal memperbarui data.");
+        setSubmitStatus("Data berhasil diperbarui!");
+        setFormData({
+          id: user.id || "",
+          firstname: user.firstName || "",
+          lastname: user.lastName || "",
+          major: user.major || "",
+          profileImage: user.imageUrl || "",
+          password: "",
+        });
+      }
     } catch (err) {
       console.error("Error updating user:", err);
       setSubmitStatus("Gagal memperbarui data. Silakan coba lagi.");
@@ -425,6 +441,7 @@ export default function Profile() {
                   </p>
                   <input
                     type="text"
+                    name="firstname"
                     onChange={handleChange}
                     value={formData.firstname}
                     placeholder="Nama Depan"
@@ -438,6 +455,7 @@ export default function Profile() {
                   </p>
                   <input
                     type="text"
+                    name="lastname"
                     onChange={handleChange}
                     value={formData.lastname}
                     placeholder="Nama Belakang"
@@ -450,6 +468,7 @@ export default function Profile() {
                 <p className="font-poppinsSemiBold text-base">Foto Profile</p>
                 <input
                   type="file"
+                  name="profileImage"
                   onChange={handleFileChange}
                   className="opacity-0 z-10 absolute w-full h-full cursor-pointer"
                 />
@@ -508,9 +527,10 @@ export default function Profile() {
                 </p>
                 <input
                   type="password"
+                  name="password"
                   onChange={handleChange}
                   value={formData.password}
-                  placeholder="Masukkan Password  untuk Konfirmasi"
+                  placeholder="Masukkan Password untuk Konfirmasi"
                   className="font-poppinsRegular text-sm text-normalText border border-[#DDDDDD] p-3 rounded-md w-full outline-none"
                 />
               </div>

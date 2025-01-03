@@ -13,6 +13,7 @@ export default function OTPVerification() {
   const inputRefs = useRef<HTMLInputElement[]>([]);
   const router = useRouter();
   const [countdown, setCountdown] = useState(59);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Dekripsi nim dari localStorage saat komponen dimuat
   useEffect(() => {
@@ -57,6 +58,7 @@ export default function OTPVerification() {
 
   const verifyOtp = async (otpValue: string) => {
     if (!nim) return;
+    setIsLoading(true);
     try {
       const response = await fetch(
         "https://lomba-backend.vercel.app/auth/verify-otp",
@@ -73,7 +75,6 @@ export default function OTPVerification() {
         throw new Error("Kode OTP salah. Silakan coba lagi.");
       }
 
-      //   localStorage.removeItem("nim");
       const validasiCode = btoa(nim + "LolosOtpSAW");
       localStorage.setItem("token", validasiCode);
       router.push("/createProfile");
@@ -81,6 +82,8 @@ export default function OTPVerification() {
       setError(err instanceof Error ? err.message : "Terjadi kesalahan.");
       setOtp(["", "", "", ""]);
       inputRefs.current[0].focus();
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -208,10 +211,19 @@ export default function OTPVerification() {
               ))}
             </div>
             {!isResendVisible ? (
-              <p className="text-gray-500 text-sm md:text-base font-poppinsRegular">
-                Kirim ulang OTP dalam{" "}
-                <span className="font-poppinsMedium">{countdown}</span> detik
-              </p>
+              isLoading ? (
+                <div className="flex items-center gap-2">
+                  <div className="w-5 h-5 border-2 border-blueSec border-t-transparent rounded-full animate-spin"></div>
+                  <p className="text-gray-500 text-sm md:text-base font-poppinsRegular">
+                    Loading...
+                  </p>
+                </div>
+              ) : (
+                <p className="text-gray-500 text-sm md:text-base font-poppinsRegular">
+                  Kirim ulang OTP dalam{" "}
+                  <span className="font-poppinsMedium">{countdown}</span> detik
+                </p>
+              )
             ) : (
               <button
                 onClick={(e) => {

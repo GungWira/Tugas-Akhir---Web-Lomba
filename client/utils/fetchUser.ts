@@ -21,6 +21,7 @@ export async function fetchUser() {
         role: "UNROLE",
         imageUrl: "/imgs/dashboard-imgs/Default-Profile-Img.svg",
         isLogin: false,
+        gender: "Hide",
       };
     }
     const data = await response.json();
@@ -32,6 +33,7 @@ export async function fetchUser() {
       nim: data.user.User.student_id || "0000000000",
       major: data.user.User.major || "User Major",
       role: data.user.User.role || "USER",
+      gender: data.user.User.gender || "Hide",
       imageUrl:
         data.user.User.profile ||
         "/imgs/dashboard-imgs/Default-Profile-Img.svg",
@@ -48,6 +50,7 @@ export async function fetchUser() {
       nim: "0000000000",
       role: "USER",
       isLogin: false,
+      gender: "Hide",
     };
   }
 }

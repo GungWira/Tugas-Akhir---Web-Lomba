@@ -22,6 +22,7 @@ export async function loginUser(data: { nim: string; password: string }) {
       nim: userdata.user.student_id || "0000000000",
       major: userdata.user.major || "User Major",
       role: userdata.user.role || "USER",
+      gender: userdata.user.gender || "Hide",
       imageUrl:
         userdata.user.profile || "/imgs/dashboard-imgs/Default-Profile-Img.svg",
       isLogin: true,
@@ -36,6 +37,7 @@ export async function loginUser(data: { nim: string; password: string }) {
       major: "User Major",
       nim: "0000000000",
       role: "USER",
+      gender: "Hide",
       isLogin: false,
     };
   }

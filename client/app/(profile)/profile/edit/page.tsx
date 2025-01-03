@@ -1,6 +1,7 @@
 "use client";
 import NavbarBackTitledDark from "@/components/NavbarBackTitledDark";
 import Image from "next/image";
+
 import { useUser } from "@/contexts/UserContext";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, FormEvent } from "react";
@@ -11,27 +12,58 @@ interface Major {
   id: string;
 }
 
+// Tambahkan interface untuk form data
+interface FormData {
+  id: string;
+  firstname: string;
+  lastname: string;
+  major: string;
+  password: string;
+  profile: File | null;
+}
+
 export default function EditProfile() {
-  const { user } = useUser();
+  const { user, update } = useUser();
   const router = useRouter();
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  const [firstName, setFirstName] = useState<string>("");
-  const [lastName, setLastName] = useState<string>("");
-  const [major, setMajor] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
   const [majorList, setMajorList] = useState<Major[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Tambahkan state untuk form
+  const [formData, setFormData] = useState<FormData>({
+    id: "",
+    firstname: "",
+    lastname: "",
+    major: "",
+    password: "",
+    profile: null,
+  });
+
+  // Handler untuk perubahan input
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  // Update handler profile upload
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
       const file = event.target.files[0];
 
-      if (!file.type.startsWith("image/")) {
+      if (!file.type.startsWith("profile/")) {
         setError("File yang diunggah harus berupa gambar.");
         return;
       }
       setSelectedImage(file);
+      setFormData((prev) => ({
+        ...prev,
+        profile: file,
+      }));
       setError(null);
     }
   };
@@ -72,44 +104,45 @@ export default function EditProfile() {
     return () => window.removeEventListener("resize", handleResize);
   }, [router]);
 
+  // Update useEffect untuk initial values
   useEffect(() => {
-    // Tambahkan initial values dari user data
     if (user) {
-      setFirstName(user.firstName || "");
-      setLastName(user.lastName || "");
-      setMajor(user.major || "");
+      setFormData({
+        id: user.id || "",
+        firstname: user.firstName || "",
+        lastname: user.lastName || "",
+        major: user.major || "",
+        password: "",
+        profile: null,
+      });
       setLoading(false);
     }
   }, [user]);
 
+  // Update handler submit
   const handlerSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setLoading(true);
     try {
-      // Validasi input
-      if (!firstName || !lastName || !major || !password) {
+      if (
+        !formData.id ||
+        !formData.firstname ||
+        !formData.lastname ||
+        !formData.major ||
+        !formData.password
+      ) {
         throw new Error("Semua field harus diisi");
       }
 
-      // Implementasi logic update profile
-      const formData = new FormData();
-      if (selectedImage) {
-        formData.append("image", selectedImage);
-      }
-      formData.append("firstName", firstName);
-      formData.append("lastName", lastName);
-      formData.append("major", major);
-      formData.append("password", password);
-
-      // Tambahkan API call untuk update profile
-      const response = await fetch("YOUR_API_ENDPOINT", {
-        method: "PUT",
-        body: formData,
+      // Kirim data ke context update
+      await update({
+        id: formData.id,
+        firstname: formData.firstname,
+        lastname: formData.lastname,
+        major: formData.major,
+        password: formData.password,
+        profile: formData.profile,
       });
-
-      if (!response.ok) {
-        throw new Error("Gagal mengupdate profil");
-      }
 
       router.push("/profile");
     } catch (err: unknown) {
@@ -159,7 +192,7 @@ export default function EditProfile() {
               </div>
               <input
                 type="file"
-                accept="image/*"
+                accept="profile/*"
                 onChange={handleImageUpload}
                 name="img"
                 id="img"
@@ -178,17 +211,17 @@ export default function EditProfile() {
             {/* FIRST NAME */}
             <div className="flex flex-col w-full justify-start items-start gap-2">
               <label
-                htmlFor="firstName"
+                htmlFor="firstname"
                 className="font-poppinsMedium text-normalText text-base"
               >
                 Nama Depan
               </label>
               <input
                 type="text"
-                name="firstName"
-                id="firstName"
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
+                name="firstname"
+                id="firstname"
+                value={formData.firstname}
+                onChange={handleChange}
                 className="w-full bg-white p-3 rounded-lg text-sm font-poppinsRegular text-normalText"
                 placeholder="Nama Depan"
               />
@@ -196,17 +229,17 @@ export default function EditProfile() {
             {/* LAST NAME */}
             <div className="flex flex-col w-full justify-start items-start gap-2">
               <label
-                htmlFor="lastName"
+                htmlFor="lastname"
                 className="font-poppinsMedium text-normalText text-base"
               >
                 Nama Belakang
               </label>
               <input
                 type="text"
-                name="lastName"
-                id="lastName"
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
+                name="lastname"
+                id="lastname"
+                value={formData.lastname}
+                onChange={handleChange}
                 className="w-full bg-white p-3 rounded-lg text-sm font-poppinsRegular text-normalText"
                 placeholder="Nama Belakang"
               />
@@ -222,8 +255,8 @@ export default function EditProfile() {
               <select
                 name="major"
                 id="major"
-                value={major}
-                onChange={(e) => setMajor(e.target.value)}
+                value={formData.major}
+                onChange={handleChange}
                 className="w-full bg-white p-3 rounded-lg text-sm font-poppinsRegular text-normalText"
                 required
               >
@@ -249,14 +282,25 @@ export default function EditProfile() {
                 type="text"
                 name="password"
                 id="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                value={formData.password}
+                onChange={handleChange}
                 className="w-full bg-white p-3 rounded-lg text-sm font-poppinsRegular text-normalText"
                 placeholder="Konfirmasi Password"
               />
             </div>
-            <Button type="submit" isDisabled={loading}>
-              {loading ? "Menyimpan..." : "Simpan Perubahan"}
+            <Button
+              type="submit"
+              isDisabled={loading}
+              className={`${loading ? "opacity-70" : ""}`}
+            >
+              {loading ? (
+                <div className="flex items-center gap-2">
+                  <div className="w-5 h-5 border-t-2 border-b-2 border-white rounded-full animate-spin"></div>
+                  <span>Menyimpan...</span>
+                </div>
+              ) : (
+                "Simpan Perubahan"
+              )}
             </Button>
           </form>
         </div>

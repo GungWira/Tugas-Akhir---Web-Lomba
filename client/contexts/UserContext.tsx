@@ -15,6 +15,7 @@ type User = {
   role: string;
   imageUrl: string;
   nim: string;
+  gender: string;
   isLogin: boolean;
 };
 
@@ -26,11 +27,12 @@ interface UserContextType {
   login: (credentials: { nim: string; password: string }) => Promise<void>; // Fungsi login
   logout: () => Promise<void>; // Fungsi logout
   update: (credentials: {
+    id: string;
     firstname: string;
     lastname: string;
     major: string;
-    profileImage: string;
     password: string;
+    profile: File | null;
   }) => Promise<Response>; // Fungsi update user
 }
 
@@ -86,11 +88,12 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
 
   // Fungsi untuk mengupdate data user
   const update = async (credentials: {
+    id: string;
     firstname: string;
     lastname: string;
     major: string;
-    profileImage: string;
     password: string;
+    profile: File | null;
   }): Promise<Response> => {
     setLoading(true); // Set loading true sebelum proses dimulai
     try {
