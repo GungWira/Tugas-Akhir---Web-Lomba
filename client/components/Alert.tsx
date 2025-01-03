@@ -13,8 +13,8 @@ type AlertProps = {
   onConfirm: () => void;
   onReject: () => void;
   isOpen: boolean;
-  isLoading: boolean;
-  isOneWay: boolean;
+  isLoading?: boolean;
+  isOneWay?: boolean;
 };
 
 const Alert: React.FC<AlertProps> = ({
