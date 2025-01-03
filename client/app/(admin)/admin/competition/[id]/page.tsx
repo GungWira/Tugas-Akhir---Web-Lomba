@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useUser } from "@/contexts/UserContext";
 import Footer from "@/components/Footer";
+import Alert from "@/components/Alert";
 
 interface Card {
   id: string;
@@ -32,6 +33,7 @@ export default function DetailLomba({
   const { user } = useUser();
   const [card, setCard] = useState<Card | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [alertOpen, setAlertOpen] = useState(false);
   const [slug, setSlug] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -60,6 +62,36 @@ export default function DetailLomba({
       month: "long",
     });
     return validDate;
+  };
+
+  const handleDelete = async () => {
+    try {
+      if (card && card.id) {
+        const response = await fetch(
+          `https://lomba-backend.vercel.app/admin/competition/${card.id}/delete`,
+          {
+            method: "DELETE",
+            credentials: "include",
+          }
+        );
+        if (!response.ok) throw new Error("Gagal menghapus lomba");
+
+        setAlertOpen(false);
+        router.push("/admin/competition");
+      }
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.log(error.message);
+      }
+    }
+  };
+
+  const handlerCancel = () => {
+    setAlertOpen(false);
+  };
+
+  const handlerEdit = () => {
+    router.push(`/admin/competition/${slug}/edit`);
   };
 
   useEffect(() => {
@@ -305,8 +337,10 @@ export default function DetailLomba({
                   <div
                     className={`flex flex-col justify-start items-start w-full md:hidden`}
                   >
-                    <Button>Edit Lomba</Button>
-                    <Button>Hapus Lomba</Button>
+                    <Button onClick={() => handlerEdit()}>Edit Lomba</Button>
+                    <Button onClick={() => setAlertOpen(!alertOpen)}>
+                      Hapus Lomba
+                    </Button>
                   </div>
                 )}
               </div>
@@ -314,7 +348,14 @@ export default function DetailLomba({
           </div>
         </div>
       </div>
-
+      <Alert
+        description={`Apakah anda yakin menonaktifkan kompetisi "${card?.title}"?`}
+        onConfirm={handleDelete}
+        onReject={handlerCancel}
+        isOpen={alertOpen}
+      >
+        Nonaktifkan Kompetisi?
+      </Alert>
       <Footer></Footer>
     </div>
   );

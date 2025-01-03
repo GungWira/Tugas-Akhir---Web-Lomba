@@ -184,7 +184,7 @@ export default function Profile() {
               )}
             </div>
           </div>
-          <div className="flex aspect-square rounded-xl border border-white w-20 overflow-hidden">
+          <div className="flex aspect-square rounded-xl border border-white w-20 overflow-hidden justify-start items-start">
             <Image
               src={
                 user && user.imageUrl

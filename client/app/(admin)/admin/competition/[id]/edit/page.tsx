@@ -150,7 +150,7 @@ export default function EditCompetition() {
     formDataFix.append("type", type);
     formDataFix.append("level", level);
     formDataFix.append("description", description);
-    formDataFix.append("endDate", endDate);
+    formDataFix.append("endDate", new Date(endDate).toISOString());
     formDataFix.append("linkPendaftaran", linkPendaftaran);
     formDataFix.append("linkGuidebook", linkGuidebook);
 

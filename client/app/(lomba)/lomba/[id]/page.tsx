@@ -499,11 +499,18 @@ export default function DetailLomba({
                         handleDaftar();
                       }}
                       isDisabled={loading}
-                      className={`${
-                        join ? "hidden" : "flex"
-                      } justify-center items-center`}
+                      className={`${join ? "hidden" : "flex"} ${
+                        loading ? "opacity-80" : ""
+                      } justify-center items-center gap-2`}
                     >
-                      Daftar
+                      {loading ? (
+                        <>
+                          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                          <span>Mengikuti Lomba...</span>
+                        </>
+                      ) : (
+                        "Daftar"
+                      )}
                     </Button>
                     {/* REIMBURSE */}
                     <Button

@@ -4,6 +4,7 @@ import Alert from "@/components/Alert";
 import Button from "@/components/Button";
 import CompetitionCardAdmin from "@/components/CompetitionCardAdmin";
 import NavbarLogin from "@/components/NavbarLogin";
+import SideBar from "@/components/SideBar";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -26,6 +27,7 @@ export default function AdminCompetitionPage() {
     id: string;
     title: string;
   }>({ id: "", title: "" });
+  const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -86,7 +88,10 @@ export default function AdminCompetitionPage() {
 
   return (
     <div className="flex min-h-screen bg-[#F1F2F6] w-full">
-      <NavbarLogin></NavbarLogin>
+      <NavbarLogin
+        isAdmin={true}
+        onClick={() => setIsOpen(!isOpen)}
+      ></NavbarLogin>
       <div className="min-h-screen w-full flex pt-24 flex-col justify-start items-start gap-4 px-4">
         {/* INFORMASI LOMBA */}
         <div className="w-full flex flex-col justify-start items-start gap-4 ">
@@ -180,6 +185,11 @@ export default function AdminCompetitionPage() {
       >
         Nonaktifkan Kompetisi?
       </Alert>
+      <SideBar
+        isAdmin={true}
+        isOpen={isOpen}
+        onClick={() => setIsOpen(!isOpen)}
+      ></SideBar>
     </div>
   );
 }
