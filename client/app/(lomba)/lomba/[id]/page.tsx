@@ -138,7 +138,7 @@ export default function DetailLomba({
       }
     };
     fetchDataCard();
-  }, [slug]);
+  }, [slug, router]);
 
   useEffect(() => {
     const fetchStatus = async () => {
