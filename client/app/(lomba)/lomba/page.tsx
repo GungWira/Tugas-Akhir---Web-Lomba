@@ -64,7 +64,7 @@ export default function Lomba() {
       }
     };
     fetchData();
-  }, []);
+  }, [router]);
 
   const handleLomba = (id: string) => {
     router.push(`lomba/${id}`);

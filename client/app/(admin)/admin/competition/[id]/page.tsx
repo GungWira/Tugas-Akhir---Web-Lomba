@@ -353,6 +353,8 @@ export default function DetailLomba({
         onConfirm={handleDelete}
         onReject={handlerCancel}
         isOpen={alertOpen}
+        isLoading={false}
+        isOneWay={false}
       >
         Nonaktifkan Kompetisi?
       </Alert>
