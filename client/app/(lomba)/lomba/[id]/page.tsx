@@ -340,7 +340,7 @@ export default function DetailLomba({
                   onClick={handleTeam}
                   isDisabled={loading}
                 >
-                  Cari Tim
+                  Buat Tim
                 </Button>
 
                 {/* RESULT */}

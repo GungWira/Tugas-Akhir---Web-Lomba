@@ -175,7 +175,7 @@ export default function CreateAccount() {
               id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="p-2 w-full bg-white rounded-md font-poppinsRegular text-xs text-[#1d1d1d]"
+              className="p-3 py-4 w-full bg-white rounded-md font-poppinsRegular text-sm text-[#1d1d1d]"
               placeholder="Masukkan Email"
               style={{ outline: "none" }}
               required
@@ -193,7 +193,7 @@ export default function CreateAccount() {
               id="name"
               onChange={(e) => setName(e.target.value)}
               value={name}
-              className="p-2 w-full bg-white rounded-md font-poppinsRegular text-xs text-[#1d1d1d]"
+              className="p-3 py-4 w-full bg-white rounded-md font-poppinsRegular text-sm text-[#1d1d1d]"
               placeholder="Masukkan Nama"
               style={{ outline: "none" }}
               required
@@ -211,7 +211,7 @@ export default function CreateAccount() {
               id="nim"
               value={nim}
               onChange={(e) => setNim(e.target.value)}
-              className="p-2 w-full bg-white rounded-md font-poppinsRegular text-xs text-[#1d1d1d]"
+              className="p-3 py-4 w-full bg-white rounded-md font-poppinsRegular text-sm text-[#1d1d1d]"
               placeholder="Masukkan NIM"
               style={{ outline: "none" }}
               required
@@ -228,7 +228,7 @@ export default function CreateAccount() {
               id="jurusan"
               value={major}
               onChange={(e) => setMajor(e.target.value)}
-              className="p-2 w-full bg-white rounded-md font-poppinsRegular text-xs"
+              className="p-3 py-4 w-full bg-white rounded-md font-poppinsRegular text-sm"
               style={{ outline: "none" }}
               required
               autoComplete="off"
@@ -253,7 +253,7 @@ export default function CreateAccount() {
               id="angkatan"
               defaultValue={cohort}
               onChange={(e) => setCohort(e.target.value)}
-              className="p-2 w-full bg-white rounded-md font-poppinsRegular text-xs"
+              className="p-3 py-4 w-full bg-white rounded-md font-poppinsRegular text-sm"
               style={{ outline: "none" }}
               required
               autoComplete="off"
@@ -279,7 +279,7 @@ export default function CreateAccount() {
               id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="p-2 w-full bg-white rounded-md font-poppinsRegular text-xs text-[#1d1d1d]"
+              className="p-3 py-4 w-full bg-white rounded-md font-poppinsRegular text-sm text-[#1d1d1d]"
               placeholder="Masukkan Password"
               style={{ outline: "none" }}
               required
@@ -300,7 +300,7 @@ export default function CreateAccount() {
               id="passwordConfirm"
               value={passwordConfirm}
               onChange={(e) => setPasswordConfirm(e.target.value)}
-              className="p-2 w-full bg-white rounded-md font-poppinsRegular text-xs text-[#1d1d1d]"
+              className="p-3 py-4 w-full bg-white rounded-md font-poppinsRegular text-sm text-[#1d1d1d]"
               placeholder="Masukkan Kembali Password"
               style={{ outline: "none" }}
               required

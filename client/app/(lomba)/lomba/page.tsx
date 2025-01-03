@@ -21,9 +21,9 @@ interface Card {
 
 export default function Lomba() {
   const router = useRouter();
-  const [isTim, setIsTim] = useState(false); // Default individu (false)
+  const [isTim, setIsTim] = useState<boolean | null>(null);
   const [competitionCards, setCompetitionCards] = useState<Card[]>([]);
-  const [selectedOption, setSelectedOption] = useState("semua"); // Default "semua"
+  const [selectedOption, setSelectedOption] = useState("semua");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>();
 
@@ -118,13 +118,13 @@ export default function Lomba() {
           <button
             type="button"
             className={`w-1/2 py-2 rounded-full text-sm font-poppinsMedium ${
-              !isTim
+              isTim === false
                 ? "bg-blueSec text-white"
                 : "bg-transparent text-normalText opacity-60"
             }`}
             onClick={() => {
-              setIsTim(false); // Set individu
-              setSelectedOption("individu"); // Sinkronkan state
+              setIsTim(false);
+              setSelectedOption("individu");
             }}
           >
             Individu
@@ -132,13 +132,13 @@ export default function Lomba() {
           <button
             type="button"
             className={`w-1/2 py-2 rounded-full text-sm font-poppinsMedium ${
-              isTim
+              isTim === true
                 ? "bg-blueSec text-white"
                 : "bg-transparent text-normalText opacity-60"
             }`}
             onClick={() => {
-              setIsTim(true); // Set tim
-              setSelectedOption("team"); // Sinkronkan state
+              setIsTim(true);
+              setSelectedOption("team");
             }}
           >
             Team

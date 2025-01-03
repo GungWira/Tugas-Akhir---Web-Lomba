@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useUser } from "@/contexts/UserContext";
 import Footer from "@/components/Footer";
+import Alert from "@/components/Alert";
 
 interface Team {
   id: string;
@@ -50,6 +51,14 @@ interface Member {
   profile: string;
 }
 
+interface Alert {
+  title: string;
+  description: string;
+  onConfirm?: () => void;
+  isLoading?: boolean;
+  isOneWay?: boolean;
+}
+
 export default function DetailTeam({
   params,
 }: {
@@ -61,6 +70,8 @@ export default function DetailTeam({
   const [team, setTeam] = useState<Team | null>(null);
   const [leader, setLeader] = useState<boolean>(false);
   const [notification, setNotification] = useState<boolean>(true);
+  const [alertOpen, setAlertOpen] = useState(false);
+  const [alertData, setAlertData] = useState<Alert | null>(null);
   const [notificationList, setNotificationList] = useState<[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -154,6 +165,12 @@ export default function DetailTeam({
   };
 
   const handlerJoin = async () => {
+    setLoading(true);
+    setAlertData({
+      title: "Loading",
+      description: "Mengajukan lamaran tim",
+      isLoading: true,
+    });
     try {
       if (user && slug) {
         const response = await fetch(
@@ -178,13 +195,15 @@ export default function DetailTeam({
             "Gagal mengikuti tim. Mohon mencoba beberapa saat lagi"
           );
         }
-        router.refresh();
+        handlerAlertTimSuccess();
       } else {
         setError("Gagal mengikuti tim. Mohon mencoba beberapa saat lagi");
       }
+      setLoading(false);
     } catch (error: unknown) {
       if (error instanceof Error) {
         setError(error.message);
+        handlerAlertTimGagal();
       }
     }
   };
@@ -310,8 +329,95 @@ export default function DetailTeam({
       }
     } catch (error: unknown) {
       if (error instanceof Error) {
-        setError(error.message);
+        console.log(error);
       }
+      setAlertData({
+        title: "Gagal Menghentikan Unggahan",
+        description:
+          "Gagal menghentikan unggahan tim. Mohon coba beberapa saat lagi",
+        onConfirm: () => setAlertOpen(false),
+        isLoading: false,
+        isOneWay: true,
+      });
+    }
+  };
+
+  // ALERT
+  const handlerAlertJoinTim = () => {
+    setAlertData({
+      title: "Ikuti Tim?",
+      description:
+        "Apakah anda yakin ingin mengikuti tim ini? Anda tidak dapat mengubah tim setelah mengikuti tim ini",
+      onConfirm: () => handlerJoin(),
+      isLoading: false,
+      isOneWay: false,
+    });
+    setAlertOpen(true);
+  };
+  const handlerAlertTimSuccess = () => {
+    setAlertData({
+      title: "Berhasil Mengikuti Tim",
+      description:
+        "Berhasil mengikuti tim, mohon tunggu konfirmasi leader tim untuk bergabung kedalam tim!",
+      onConfirm: () => setAlertOpen(false),
+      isLoading: false,
+      isOneWay: true,
+    });
+    setAlertOpen(true);
+  };
+  const handlerAlertTimGagal = () => {
+    setAlertData({
+      title: "Gagal Mengikuti Tim",
+      description:
+        "Gagal mengikuti tim, Anda sudah tergabung pada tim lainnya!",
+      onConfirm: () => setAlertOpen(false),
+    });
+    setAlertOpen(true);
+  };
+
+  // Tambahkan handler alert untuk stop publish
+  const handlerAlertStopPublish = () => {
+    setAlertData({
+      title: "Hentikan Unggahan?",
+      description:
+        "Apakah anda yakin ingin menghentikan unggahan tim ini? Tim tidak akan muncul di pencarian setelah dihentikan",
+      onConfirm: () => handlerStopPublish(),
+      isLoading: false,
+      isOneWay: false,
+    });
+    setAlertOpen(true);
+  };
+
+  const handlerStopPublish = async () => {
+    setAlertData({
+      title: "Loading",
+      description: "Menghentikan unggahan tim",
+      isLoading: true,
+    });
+
+    try {
+      const result = await handlerUnpublish();
+      if (result) {
+        setAlertData({
+          title: "Berhasil Menghentikan Unggahan",
+          description: "Tim berhasil dihentikan dari pencarian",
+          onConfirm: () => router.push(`/tim/${slug}`),
+          isLoading: false,
+          isOneWay: true,
+        });
+      }
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.log(error);
+      }
+      setAlertData({
+        title: "Gagal Menghentikan Unggahan",
+        description:
+          "Gagal menghentikan unggahan tim. Mohon coba beberapa saat lagi",
+        onConfirm: () => setAlertOpen(false),
+        isLoading: false,
+        isOneWay: true,
+      });
     }
   };
 
@@ -920,7 +1026,7 @@ export default function DetailTeam({
                           : "hidden"
                         : "hidden"
                     }`}
-                    onClick={handlerUnpublish}
+                    onClick={handlerAlertStopPublish}
                   >
                     Stop Unggahan
                   </Button>
@@ -934,7 +1040,9 @@ export default function DetailTeam({
                           : ""
                         : "hidden"
                     }`}
-                    onClick={handlerJoin}
+                    onClick={() => {
+                      handlerAlertJoinTim();
+                    }}
                   >
                     Ikuti Tim
                   </Button>
@@ -948,6 +1056,16 @@ export default function DetailTeam({
         </div>
       </div>
       <Footer></Footer>
+      <Alert
+        isOpen={alertOpen}
+        description={alertData?.description || ""}
+        onConfirm={alertData?.onConfirm || (() => {})}
+        onReject={() => setAlertOpen(false)}
+        isLoading={alertData?.isLoading || false}
+        isOneWay={alertData?.isOneWay || false}
+      >
+        {alertData?.title || "Ikuti Tim?"}
+      </Alert>
     </div>
   );
 }
