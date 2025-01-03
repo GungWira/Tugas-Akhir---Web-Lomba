@@ -965,7 +965,7 @@ export default function DetailTeam({
                       p
                     </div>
                   ) : (
-                    <p className="text-normalText font-poppinsRegular text-sm opacity-70">
+                    <p className="text-normalText font-poppinsRegular text-sm opacity-70 whitespace-pre-line">
                       {team ? team.description : "Deskripsi"}
                     </p>
                   )}

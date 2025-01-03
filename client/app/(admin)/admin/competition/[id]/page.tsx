@@ -270,7 +270,7 @@ export default function DetailLomba({
                     p
                   </div>
                 ) : (
-                  <p className="text-normalText opacity-70 text-justify text-sm font-poppinsRegular my-2">
+                  <p className="text-normalText opacity-70 text-justify text-sm font-poppinsRegular my-2 whitespace-pre-line">
                     {card?.description}
                   </p>
                 )}

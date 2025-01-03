@@ -75,6 +75,8 @@ export default function DetailLomba({
     useState<ReimburseDetail | null>(null);
   const [resultDetail, setResultDetail] = useState<ResultDetail | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [isLoadingDaftar, setIsLoadingDaftar] = useState<boolean>(false);
+  const [viewOnly, setViewOnly] = useState<boolean>(false);
 
   useEffect(() => {
     const getSlug = async () => {
@@ -111,8 +113,7 @@ export default function DetailLomba({
           const currentDate = new Date();
           const endDate = new Date(data.endDate);
           if (endDate < currentDate) {
-            router.push("/lomba");
-            return;
+            setViewOnly(true);
           }
           setCard(data);
 
@@ -181,6 +182,7 @@ export default function DetailLomba({
   }, [slug, user, card]);
 
   const handleDaftar = async () => {
+    setIsLoadingDaftar(true);
     try {
       if (!user) throw new Error("Gagal memuat data user");
 
@@ -200,6 +202,7 @@ export default function DetailLomba({
       if (!response.ok)
         throw new Error("Gagal mendaftar lomba, mohon coba beberapa saat lagi");
       setJoin(true);
+      setIsLoadingDaftar(false);
     } catch (error: unknown) {
       if (error instanceof Error) {
         setError(
@@ -210,6 +213,7 @@ export default function DetailLomba({
           "Terjadi kesalahan pada server, mohon coba beberapa saat lagi"
         );
       }
+      setIsLoadingDaftar(false);
     }
   };
 
@@ -299,19 +303,28 @@ export default function DetailLomba({
             </div>
             {loading ? (
               <div className=""></div>
-            ) : (
+            ) : !viewOnly ? (
               <div className={`flex flex-col justify-start items-start w-full`}>
                 {/* JOIN */}
                 <Button
                   onClick={() => {
                     handleDaftar();
                   }}
-                  isDisabled={loading}
+                  isDisabled={isLoadingDaftar}
                   className={`${
                     join ? "hidden" : "flex"
-                  } justify-center items-center`}
+                  } justify-center items-center gap-2 ${
+                    isLoadingDaftar ? "opacity-80" : ""
+                  }`}
                 >
-                  Daftar
+                  {isLoadingDaftar ? (
+                    <>
+                      Loading...
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    </>
+                  ) : (
+                    "Daftar"
+                  )}
                 </Button>
                 {/* REIMBURSE */}
                 <Button
@@ -354,6 +367,8 @@ export default function DetailLomba({
                   Result
                 </Button>
               </div>
+            ) : (
+              ""
             )}
           </div>
         </div>
@@ -426,7 +441,7 @@ export default function DetailLomba({
                     p
                   </div>
                 ) : (
-                  <p className="text-normalText opacity-70 text-justify text-sm font-poppinsRegular my-2">
+                  <p className="text-normalText opacity-70 text-justify text-sm font-poppinsRegular my-2 whitespace-pre-line">
                     {card?.description}
                   </p>
                 )}
