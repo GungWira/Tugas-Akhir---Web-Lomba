@@ -195,8 +195,10 @@ export default function DetailLomba({
               <div className=""></div>
             ) : (
               <div className={`flex flex-col justify-start items-start w-full`}>
-                <Button>Edit Lomba</Button>
-                <Button>Hapus Lomba</Button>
+                <Button onClick={() => handlerEdit()}>Edit Lomba</Button>
+                <Button onClick={() => setAlertOpen(!alertOpen)}>
+                  Hapus Lomba
+                </Button>
               </div>
             )}
           </div>

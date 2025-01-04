@@ -221,7 +221,7 @@ export default function DetailLomba({
     router.push(`/lomba/${card?.id}/reimburse`);
   };
   const handleTeam = () => {
-    router.push(`/lomba/${card?.id}/find-team`);
+    router.push(`/lomba/${card?.id}/find-team?namaLomba=${card?.title}`);
   };
   const handleResult = () => {
     router.push(`/lomba/${card?.id}/result`);
@@ -518,7 +518,7 @@ export default function DetailLomba({
                         loading ? "opacity-80" : ""
                       } justify-center items-center gap-2`}
                     >
-                      {loading ? (
+                      {isLoadingDaftar ? (
                         <>
                           <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                           <span>Mengikuti Lomba...</span>
@@ -554,7 +554,7 @@ export default function DetailLomba({
                       onClick={handleTeam}
                       isDisabled={loading}
                     >
-                      Cari Tim
+                      Buat Tim
                     </Button>
 
                     {/* RESULT */}

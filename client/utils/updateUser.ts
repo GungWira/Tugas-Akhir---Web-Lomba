@@ -8,8 +8,8 @@ export async function updateUser(data: {
 }): Promise<Response> {
   try {
     const formData = new FormData();
-    formData.append("firstname", data.firstname);
-    formData.append("lastname", data.lastname);
+    formData.append("firstName", data.firstname);
+    formData.append("lastName", data.lastname);
     formData.append("major", data.major);
     formData.append("password", data.password);
     if (data.profile) {
@@ -24,15 +24,6 @@ export async function updateUser(data: {
         credentials: "include", // Pastikan cookie dikirim
       }
     );
-
-    // Jika response gagal, lempar error
-    // if (!response.ok) {
-    //   const errorData = await response.json();
-    //   throw new Error(errorData.message || "Update failed");
-    // }
-
-    // Response berhasil
-    console.log(response);
     return response;
   } catch (error) {
     console.error("Error updating user:", error);

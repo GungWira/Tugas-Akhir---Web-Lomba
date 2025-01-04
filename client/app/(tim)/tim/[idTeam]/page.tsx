@@ -75,6 +75,7 @@ export default function DetailTeam({
   const [notificationList, setNotificationList] = useState<[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [isPending, setIsPending] = useState<boolean>(false);
 
   useEffect(() => {
     const getSlug = async () => {
@@ -153,6 +154,33 @@ export default function DetailTeam({
     fetchNotification();
   }, [leader, user]);
 
+  useEffect(() => {
+    const checkPendingRequest = async () => {
+      if (slug && user) {
+        try {
+          const response = await fetch(
+            `https://lomba-backend.vercel.app/teams/${slug}/pendingRequests`,
+            {
+              method: "GET",
+              credentials: "include",
+            }
+          );
+
+          if (!response.ok) throw new Error("Gagal mengecek status lamaran");
+
+          const data = await response.json();
+          setIsPending(
+            data.some((request: { id: string }) => request.id === user.id)
+          );
+        } catch (error) {
+          console.error("Error checking pending request:", error);
+        }
+      }
+    };
+
+    checkPendingRequest();
+  }, [slug, user]);
+
   const handleDate = (date: string | null) => {
     if (!date) return;
 
@@ -195,6 +223,7 @@ export default function DetailTeam({
             "Gagal mengikuti tim. Mohon mencoba beberapa saat lagi"
           );
         }
+        setIsPending(true);
         handlerAlertTimSuccess();
       } else {
         setError("Gagal mengikuti tim. Mohon mencoba beberapa saat lagi");
@@ -414,6 +443,56 @@ export default function DetailTeam({
         title: "Gagal Menghentikan Unggahan",
         description:
           "Gagal menghentikan unggahan tim. Mohon coba beberapa saat lagi",
+        onConfirm: () => setAlertOpen(false),
+        isLoading: false,
+        isOneWay: true,
+      });
+    }
+  };
+
+  const alertDeleteTeam = () => {
+    setAlertData({
+      title: "Hapus Tim?",
+      description: "Apakah anda yakin ingin menghapus tim ini?",
+      onConfirm: () => handlerDeleteTeam(),
+      isLoading: false,
+      isOneWay: false,
+    });
+    setAlertOpen(true);
+  };
+
+  const handlerDeleteTeam = async () => {
+    setAlertData({
+      title: "Loading",
+      description: "Menghapus tim",
+      isLoading: true,
+    });
+    try {
+      if (user && slug) {
+        const response = await fetch(
+          `https://lomba-backend.vercel.app/teams/${slug}/members/${user?.id}`,
+          {
+            method: "DELETE",
+            credentials: "include",
+          }
+        );
+        if (!response.ok)
+          throw new Error("Gagal menghapus tim. Mohon coba beberapa saat lagi");
+        setAlertData({
+          title: "Berhasil Menghapus Tim",
+          description: "Tim berhasil dihapus",
+          onConfirm: () => router.back(),
+          isLoading: false,
+          isOneWay: true,
+        });
+      }
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.log(error.message);
+      }
+      setAlertData({
+        title: "Gagal Menghapus Tim",
+        description: "Gagal menghapus tim. Mohon coba beberapa saat lagi",
         onConfirm: () => setAlertOpen(false),
         isLoading: false,
         isOneWay: true,
@@ -1018,18 +1097,38 @@ export default function DetailTeam({
                 <div className=""></div>
               ) : (
                 <div className="w-full flex flex-col">
-                  <Button
-                    className={`mt-0 ${
-                      leader
-                        ? team?.openSlots || 0 > 0
-                          ? ""
+                  <div className="w-full flex flex-row justify-start items-center gap-2">
+                    <Button
+                      className={`mt-0 ${
+                        leader
+                          ? team?.openSlots || 0 > 0
+                            ? ""
+                            : "hidden"
                           : "hidden"
-                        : "hidden"
-                    }`}
-                    onClick={handlerAlertStopPublish}
-                  >
-                    Stop Unggahan
-                  </Button>
+                      }`}
+                      onClick={handlerAlertStopPublish}
+                    >
+                      Stop Unggahan
+                    </Button>
+                    {(leader && team?.openSlots) || 0 > 0 ? (
+                      <Button
+                        className=" w-fit max-w-fit bg-transparent border border-[#C2C2C2]"
+                        onClick={alertDeleteTeam}
+                      >
+                        <div className="w-6 aspect-square overflow-hidden">
+                          <Image
+                            src="/imgs/admin/trash.svg"
+                            alt="Trash"
+                            width={1}
+                            height={1}
+                            layout="responsive"
+                          />
+                        </div>
+                      </Button>
+                    ) : (
+                      ""
+                    )}
+                  </div>
                   <Button
                     className={`mt-0 ${
                       leader
@@ -1043,8 +1142,9 @@ export default function DetailTeam({
                     onClick={() => {
                       handlerAlertJoinTim();
                     }}
+                    isDisabled={isPending}
                   >
-                    Ikuti Tim
+                    {isPending ? "Lamaran Terkirim" : "Ikuti Tim"}
                   </Button>
                   <p className="text-red-500 font-poppinsRegular text-sm mt-2">
                     {error}

@@ -87,39 +87,39 @@ export default function AdminCompetitionPage() {
   };
 
   return (
-    <div className="flex min-h-screen bg-[#F1F2F6] w-full">
+    <div className="flex min-h-screen bg-[#F1F2F6] w-full justify-center items-center">
       <NavbarLogin
         isAdmin={true}
         onClick={() => setIsOpen(!isOpen)}
       ></NavbarLogin>
-      <div className="min-h-screen w-full flex pt-24 flex-col justify-start items-start gap-4 px-4">
+      <div className="min-h-screen w-full flex pt-24 flex-col justify-start items-start gap-4 px-4 max-w-6xl lg:px-0">
         {/* INFORMASI LOMBA */}
         <div className="w-full flex flex-col justify-start items-start gap-4 ">
           <div className="flex flex-col justify-start items-start gap-1 w-full">
-            <h1 className="font-poppinsBold text-base text-normalText">
+            <h1 className="font-poppinsBold text-base text-normalText md:text-xl">
               Informasi Lomba
             </h1>
-            <p className="font-poppinsMedium text-xs text-normalText opacity-80">
+            <p className="font-poppinsMedium text-xs text-normalText opacity-80 md:text-sm">
               Informasi lomba Primakara University
             </p>
           </div>
           <div className="w-full flex flex-col justify-start items-start gap-2">
             <div className="w-full flex flex-col justify-start items-start gap-1 p-4 bg-white rounded-lg">
-              <p className="font-poppinsMedium text-xs text-normalText opacity-80">
+              <p className="font-poppinsMedium text-xs text-normalText opacity-80 md:text-sm">
                 Lomba yang tersedia
               </p>
-              <p className="font-poppinsSemiBold text-base text-normalText">
+              <p className="font-poppinsSemiBold text-base text-normalText md:text-xl">
                 {competition.length || 0}
               </p>
             </div>
             <Button
               style={{ marginTop: 0 }}
-              className="text-sm flex justify-center items-center gap-2 py-3"
+              className="text-sm flex justify-center items-center gap-2 py-3 md:text-base"
               onClick={() => {
                 router.push("/admin/competition/create");
               }}
             >
-              <div className="w-3 aspect-square overflow-hidden flex justify-center items-center gap-2">
+              <div className="w-3 aspect-square overflow-hidden flex justify-center items-center gap-2 md:w-4">
                 <Image
                   src="/imgs/admin/addition.svg"
                   alt="plus"
@@ -132,12 +132,12 @@ export default function AdminCompetitionPage() {
           </div>
         </div>
         {/* DATA LOMBA */}
-        <div className="flex flex-col justify-start items-start w-full gap-2">
-          <div className="w-full flex flex-col justify-start items-start gap-1 mb-2">
-            <p className="font-poppinsSemiBold text-base text-normalText">
-              Lomba yang tersedia
-            </p>
-          </div>
+        <div className="w-full flex flex-col justify-start items-start gap-1 mt-2">
+          <p className="font-poppinsSemiBold text-base text-normalText">
+            Lomba yang tersedia
+          </p>
+        </div>
+        <div className="flex flex-col justify-start items-start w-full gap-2 md:grid md:grid-cols-2 lg:grid-cols-3">
           {isLoading ? (
             <CompetitionCardAdmin
               id="1"

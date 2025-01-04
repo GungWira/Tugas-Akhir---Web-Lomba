@@ -34,7 +34,7 @@ const Alert: React.FC<AlertProps> = ({
     >
       <div className="bg-black opacity-60 w-screen h-screen absolute z-10"></div>
       {/* NOTIF */}
-      <div className="relative z-20 px-4 justify-center items-center w-full">
+      <div className="relative z-20 px-4 justify-center items-center w-full max-w-md">
         <div className="w-full bg-white rounded-xl p-4 flex flex-col justify-start items-center gap-2">
           {isLoading ? (
             <div className="w-14 h-14 bg-blueSec rounded-full flex items-center justify-center">

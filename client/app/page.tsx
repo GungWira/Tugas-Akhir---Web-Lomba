@@ -130,7 +130,6 @@ export default function Home() {
             throw new Error("Failed to fetch lomba cards");
           }
           const dataCompetition = await responseCompetition.json();
-          console.log(dataCompetition);
           const filteredCompetition = dataCompetition.filter(
             (competition: Card) => {
               const endDate = new Date(competition.endDate);
@@ -151,7 +150,6 @@ export default function Home() {
             throw new Error("Failed to fetch team cards");
           }
           const dataTeam = await responseTeam.json();
-          console.log(dataTeam);
           // Filter tim berdasarkan slot terbuka dan tanggal akhir lomba belum lewat
           const filteredTeams = dataTeam.filter((team: Teams) => {
             const endDate = new Date(team.competition.endDate);

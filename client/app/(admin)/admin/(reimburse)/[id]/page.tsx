@@ -148,7 +148,7 @@ export default function ReimbursePage({
   return (
     <div className="w-full h-screen flex justify-start items-start">
       <NavbarBack>Ajuan Reimburse</NavbarBack>
-      <div className="w-full min-h-screen pt-24 flex">
+      <div className="w-full min-h-screen pt-24 flex max-w-6xl justify-center items-center">
         <div
           className="flex flex-col justify-start items-start w-full bg-white px-4 py-6 min-h-full gap-6"
           style={{ borderTopLeftRadius: 24, borderTopRightRadius: 24 }}

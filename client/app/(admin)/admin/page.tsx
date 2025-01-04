@@ -60,18 +60,18 @@ export default function AdminPage() {
   }, [user, router]);
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#F1F2F6] w-full justify-start items-start">
+    <div className="flex flex-col min-h-screen bg-[#F1F2F6] w-full justify-start items-center">
       <NavbarLogin
         isAdmin={true}
         onClick={() => setIsOpen(!isOpen)}
       ></NavbarLogin>
-      <div className="mt-24 flex flex-col justify-start items-start px-4 w-full gap-5">
+      <div className="mt-24 flex flex-col justify-start items-start px-4 w-full gap-5 max-w-6xl lg:px-0">
         {/* TITLE */}
         <div className="flex flex-col justify-start items-start gap-1">
-          <h1 className="font-poppinsSemiBold text-base text-normalText">
+          <h1 className="font-poppinsSemiBold text-base md:text-xl text-normalText">
             Dashboard Admin
           </h1>
-          <p className="font-poppinsRegular text-xs text-normalText opacity-80">
+          <p className="font-poppinsRegular text-xs md:text-sm text-normalText opacity-80">
             Satu platform untuk mengelola lomba Primakara University
           </p>
         </div>
@@ -79,35 +79,35 @@ export default function AdminPage() {
         <div className="flex flex-col justify-start items-start w-full gap-3">
           {/* DETAIL CARD REIMBURSE*/}
           <div className="w-full rounded-md bg-blueSec flex flex-col justify-start items-start gap-1 p-4">
-            <p className="font-poppinsRegular text-xs text-white opacity-80">
+            <p className="font-poppinsRegular text-xs text-white opacity-80 md:text-sm">
               Total Pengajuan Reimburse
             </p>
-            <h2 className="font-poppinsSemiBold text-lg text-white">
+            <h2 className="font-poppinsSemiBold text-lg text-white md:text-xl">
               {reimburseData ? reimburseData.totalReimburses : 0}
             </h2>
           </div>
           {/* DETAIL CARD REIMBURSE APPROVED*/}
           <div className="w-full rounded-md bg-white flex flex-col justify-start items-start gap-1 p-4">
-            <p className="font-poppinsRegular text-xs text-normalText opacity-80">
+            <p className="font-poppinsRegular text-xs text-normalText opacity-80 md:text-sm">
               Total Pengajuan Reimburse yang Disetujui
             </p>
-            <h2 className="font-poppinsSemiBold text-lg text-normalText">
+            <h2 className="font-poppinsSemiBold text-lg text-normalText md:text-xl">
               {reimburseData ? reimburseData.approvedReimburses.count : 0}
             </h2>
           </div>
           {/* DETAIL CARD REIMBURSE REJECTED*/}
           <div className="w-full rounded-md bg-white flex flex-col justify-start items-start gap-1 p-4">
-            <p className="font-poppinsRegular text-xs text-normalText opacity-80">
+            <p className="font-poppinsRegular text-xs text-normalText opacity-80 md:text-sm">
               Total Pengajuan Reimburse yang Ditolak
             </p>
-            <h2 className="font-poppinsSemiBold text-lg text-normalText">
+            <h2 className="font-poppinsSemiBold text-lg text-normalText md:text-xl">
               {reimburseData ? reimburseData.rejectedReimburses.count : 0}
             </h2>
           </div>
         </div>
         {/* NOTIFICATIONS */}
         <div className="w-full flex flex-col justify-start items-start gap-3">
-          <h1 className="font-poppinsSemiBold text-base text-normalText">
+          <h1 className="font-poppinsSemiBold text-base text-normalText md:text-xl">
             Notifikasi
           </h1>
           {loading ? (

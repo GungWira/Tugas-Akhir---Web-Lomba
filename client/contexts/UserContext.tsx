@@ -99,8 +99,25 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
     try {
       const response = await updateUser(credentials);
       if (response.ok) {
-        const updatedUser = await response.json(); // Asumsikan server mengembalikan data user yang telah diperbarui
-        setUser(updatedUser);
+        const updatedUser = await response.json();
+        setUser((prev) =>
+          prev
+            ? {
+                ...prev,
+                imageUrl:
+                  updatedUser.profile ||
+                  "/imgs/dashboard-imgs/Default-Profile-Img.svg",
+                name: prev.name,
+                firstName: updatedUser.firstName,
+                lastName: updatedUser.lastName,
+                major: updatedUser.major,
+                role: prev.role,
+                nim: prev.nim,
+                gender: prev.gender,
+                isLogin: prev.isLogin,
+              }
+            : null
+        );
       }
       return response; // Mengembalikan response untuk dicek di tempat lain
     } catch (error) {

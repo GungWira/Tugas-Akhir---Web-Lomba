@@ -74,19 +74,22 @@ export default function Profile() {
     setLoading(true);
     setSubmitStatus(null);
 
-    try {
-      if (user) {
-        console.log(formData);
-        const response = await update({
-          id: formData.id,
-          firstname: formData.firstname,
-          lastname: formData.lastname,
-          major: formData.major,
-          password: formData.password,
-          profile: imageFile,
-        });
-
-        if (!response.ok) throw new Error("Gagal memperbarui data.");
+    if (user) {
+      const response = await update({
+        id: user.id!,
+        firstname: formData.firstname,
+        lastname: formData.lastname,
+        major: formData.major,
+        password: formData.password,
+        profile: imageFile,
+      });
+      if (!response.ok) {
+        if (response.status === 400) {
+          setSubmitStatus("Gagal Memperbarui Data. Password Salah");
+        } else {
+          setSubmitStatus("Gagal memperbarui data. Silakan coba lagi.");
+        }
+      } else {
         setSubmitStatus("Data berhasil diperbarui!");
         setFormData({
           id: user.id || "",
@@ -97,10 +100,6 @@ export default function Profile() {
           password: "",
         });
       }
-    } catch (err) {
-      console.error("Error updating user:", err);
-      setSubmitStatus("Gagal memperbarui data. Silakan coba lagi.");
-    } finally {
       setLoading(false);
     }
   };

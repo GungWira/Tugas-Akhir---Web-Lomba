@@ -32,9 +32,11 @@ export default function FindTeam({
   // Fetch `slug` dan `namaLomba` dari parameter URL
   useEffect(() => {
     const fetchParams = async () => {
+      const searchParams = new URLSearchParams(window.location.search);
+      const namaLombaParam = searchParams.get("namaLomba");
       const data = await params;
       setSlug(data.id);
-      setNamaLomba(data.namaLomba);
+      setNamaLomba(namaLombaParam);
     };
     fetchParams();
   }, [params]);
