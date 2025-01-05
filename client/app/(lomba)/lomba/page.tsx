@@ -145,10 +145,14 @@ export default function Lomba() {
 
         {/* CARD */}
         <div
-          className={`w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 justify-start items-start gap-4 min-h-[70vh] ${
-            filteredCompetitions.length == 0 &&
-            !loading &&
-            "sm:grid-cols-1 md:grid-cols-1"
+          className={`w-full grid grid-cols-1 justify-start items-start gap-4 min-h-[70vh] ${
+            filteredCompetitions.length == 0 && !loading
+              ? "md:grid-cols-1"
+              : "md:grid-cols-2"
+          } ${
+            filteredCompetitions.length == 0 && !loading
+              ? "xl:grid-cols-1"
+              : "xl:grid-cols-3"
           }`}
         >
           {filteredCompetitions.length == 0 && !loading && (
