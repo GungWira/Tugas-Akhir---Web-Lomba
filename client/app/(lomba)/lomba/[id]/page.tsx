@@ -338,8 +338,9 @@ export default function DetailLomba({
                 </Button>
 
                 {/* TEAM */}
-                <Button
-                  className={`bg-[#F1F2F6] text-normalText 
+                {card?.type != "Individu" && (
+                  <Button
+                    className={`bg-[#F1F2F6] text-normalText 
                     ${
                       join
                         ? reimburse
@@ -349,12 +350,13 @@ export default function DetailLomba({
                           : "flex"
                         : "hidden"
                     } justify-center items-center`}
-                  style={{ backgroundColor: `#F1F2F6`, color: `#767676` }}
-                  onClick={handleTeam}
-                  isDisabled={loading}
-                >
-                  Buat Tim
-                </Button>
+                    style={{ backgroundColor: `#F1F2F6`, color: `#767676` }}
+                    onClick={handleTeam}
+                    isDisabled={loading}
+                  >
+                    Buat Tim
+                  </Button>
+                )}
 
                 {/* RESULT */}
                 <Button
@@ -372,8 +374,8 @@ export default function DetailLomba({
             )}
           </div>
         </div>
-        <div className="flex flex-col justify-start items-start gap-3 w-full">
-          <div className="flex flex-col justify-start items-start py-4 md:px-0 pt-0 gap-2  w-full px-4 max-w-6xl">
+        <div className="flex flex-col justify-start items-start gap-3 w-full max-w-full overflow-x-hidden">
+          <div className="flex flex-col justify-start items-start py-4 md:px-0 pt-0 gap-2  w-full px-4 max-w-6xl overflow-x-hidden">
             <div className="bg-white w-full rounded-md px-4 py-6 flex flex-col justify-start items-start gap-2">
               {/* TITLE */}
               {loading ? (
@@ -435,7 +437,7 @@ export default function DetailLomba({
                   {handleDate(card?.endDate || null) || "31 Desember"}
                 </div>
               </div>
-              <div className="flex flex-col w-full gap-2">
+              <div className="flex flex-col w-full gap-2 overflow-x-scroll">
                 {loading ? (
                   <div className="text-sm my-2 font-poppinsRegular w-full h-24 bg-[#F1F2F6] text-[#F1F2F6]">
                     p
@@ -539,23 +541,25 @@ export default function DetailLomba({
                     </Button>
 
                     {/* TEAM */}
-                    <Button
-                      className={`bg-[#F1F2F6] text-normalText 
-                    ${
-                      join
-                        ? reimburse
-                          ? "hidden"
-                          : isTim
-                          ? "hidden"
-                          : "flex"
-                        : "hidden"
-                    } justify-center items-center`}
-                      style={{ backgroundColor: `#F1F2F6`, color: `#767676` }}
-                      onClick={handleTeam}
-                      isDisabled={loading}
-                    >
-                      Buat Tim
-                    </Button>
+                    {card?.type != "Individu" && (
+                      <Button
+                        className={`bg-[#F1F2F6] text-normalText 
+                      ${
+                        join
+                          ? reimburse
+                            ? "hidden"
+                            : isTim
+                            ? "hidden"
+                            : "flex"
+                          : "hidden"
+                      } justify-center items-center`}
+                        style={{ backgroundColor: `#F1F2F6`, color: `#767676` }}
+                        onClick={handleTeam}
+                        isDisabled={loading}
+                      >
+                        Buat Tim
+                      </Button>
+                    )}
 
                     {/* RESULT */}
                     <Button
@@ -603,34 +607,35 @@ export default function DetailLomba({
               </div>
             </div>
           </div>
-
-          <div className="flex flex-col justify-start items-start gap-3 w-full px-4 md:px-0 mb-8 max-w-6xl">
-            {cardTeam.map((card: CardTeam) => (
-              <TeamCard
-                key={card.id}
-                id={card.id}
-                userId={card.leader.id}
-                title={card.name}
-                description={card.description}
-                endDate={card.endDate}
-                captainName={card.leader.name}
-                captainImgUrl={card.leader.profile}
-                teamSlot={card.openSlots}
-                className={
-                  isTim
-                    ? teamDetail
-                      ? card.id == teamDetail.id
-                        ? "flex"
+          {card?.type != "Individu" && (
+            <div className="flex flex-col justify-start items-start gap-3 w-full px-4 md:px-0 mb-8 max-w-6xl">
+              {cardTeam.map((card: CardTeam) => (
+                <TeamCard
+                  key={card.id}
+                  id={card.id}
+                  userId={card.leader.id}
+                  title={card.name}
+                  description={card.description}
+                  endDate={card.endDate}
+                  captainName={card.leader.name}
+                  captainImgUrl={card.leader.profile}
+                  teamSlot={card.openSlots}
+                  className={
+                    isTim
+                      ? teamDetail
+                        ? card.id == teamDetail.id
+                          ? "flex"
+                          : "hidden"
                         : "hidden"
+                      : card.openSlots > 0
+                      ? "flex"
                       : "hidden"
-                    : card.openSlots > 0
-                    ? "flex"
-                    : "hidden"
-                }
-                onClick={() => router.push(`/tim/${card.id}`)}
-              ></TeamCard>
-            ))}
-          </div>
+                  }
+                  onClick={() => router.push(`/tim/${card.id}`)}
+                ></TeamCard>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 

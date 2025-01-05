@@ -24,6 +24,7 @@ export default function FindTeam({
     namaTim: "",
     namaKetua: user?.name || "Collecting Account Name...",
     nimKetua: user?.nim || "Collecting Account NIM...",
+    phone: "",
     deskripsi: "",
     sisaSlot: "",
     tanggalTerakhir: "",
@@ -67,10 +68,10 @@ export default function FindTeam({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const { namaTim, deskripsi, sisaSlot, tanggalTerakhir } = formData;
+    const { namaTim, deskripsi, sisaSlot, tanggalTerakhir, phone } = formData;
 
     // Validasi input
-    if (!namaTim || !deskripsi || !sisaSlot || !tanggalTerakhir) {
+    if (!namaTim || !deskripsi || !sisaSlot || !tanggalTerakhir || !phone) {
       setError("Harap isi semua field yang wajib diisi!");
       return;
     }
@@ -86,6 +87,7 @@ export default function FindTeam({
       description: deskripsi,
       openSlots: parseInt(sisaSlot),
       endDate: new Date(tanggalTerakhir).toISOString(),
+      phone: phone,
     };
 
     try {
@@ -114,6 +116,7 @@ export default function FindTeam({
           namaTim: "",
           namaKetua: user?.name || "",
           nimKetua: user?.nim || "",
+          phone: "",
           deskripsi: "",
           sisaSlot: "",
           tanggalTerakhir: "",
@@ -133,7 +136,7 @@ export default function FindTeam({
 
   return (
     <div className="relative flex flex-col justify-start items-center w-full min-h-screen md:min-h-0 overflow-hidden sm:max-h-none sm:overflow-scroll">
-      <NavbarBackTitled>Cari Anggota Tim</NavbarBackTitled>
+      <NavbarBackTitled>Buat Tim</NavbarBackTitled>
 
       <div className="flex flex-col justify-start items-start p-6 py-8 gap-2 mt-24 w-full bg-[#F1F2F6] min-h-screen md:min-h-0 md:bg-white max-w-5xl rounded-3xl z-50">
         {error ? (
@@ -217,6 +220,24 @@ export default function FindTeam({
               name="nimKetua"
               value={formData.nimKetua}
               disabled
+              className="mt-1 block w-full px-3 border focus:ring-blueSec focus:border-blueSec py-2 bg-white rounded-md font-poppinsRegular text-base text-[#A6A6A6]"
+            />
+          </div>
+
+          {/* Nomor WA Ketua */}
+          <div className="mb-4">
+            <label
+              htmlFor="phone"
+              className="block text-base font-poppinsMedium text-normalText"
+            >
+              Nomor WhatsApp Ketua
+            </label>
+            <input
+              type="text"
+              id="phone"
+              name="phone"
+              value={formData.phone}
+              onChange={handleChange}
               className="mt-1 block w-full px-3 border focus:ring-blueSec focus:border-blueSec py-2 bg-white rounded-md font-poppinsRegular text-base text-[#A6A6A6]"
             />
           </div>

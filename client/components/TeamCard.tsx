@@ -96,7 +96,9 @@ const TeamCard: React.FC<TeamCardProps> = ({
         <div className="w-full bg-white border px-3 py-1 rounded-md flex flex-row justify-between gap-2 items-center">
           <div className="max-w-10 min-w-10 aspect-square rounded-full border overflow-hidden">
             <Image
-              src={captainImgUrl}
+              src={
+                captainImgUrl || "/imgs/dashboard-imgs/Default-Profile-Img.svg"
+              }
               alt="Image Profile Leader"
               width={1}
               height={1}

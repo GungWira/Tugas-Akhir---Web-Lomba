@@ -38,6 +38,14 @@ export default function CreateProfile() {
         setError("File yang diunggah harus berupa gambar.");
         return;
       }
+
+      // Pemeriksaan ukuran file (3MB = 3 * 1024 * 1024 bytes)
+      const maxSize = 3 * 1024 * 1024; // 3MB dalam bytes
+      if (file.size > maxSize) {
+        setError("Ukuran file tidak boleh lebih dari 3MB.");
+        return;
+      }
+
       setSelectedImage(file);
       setError(null);
     }
@@ -47,8 +55,20 @@ export default function CreateProfile() {
     e.preventDefault();
     setIsLoading(true);
 
-    if (!selectedImage || !firstName || !lastName || !gender) {
-      setError("Semua field harus diisi dengan benar.");
+    if (!firstName) {
+      setError("Nama depan tidak boleh kosong.");
+      setIsLoading(false);
+      return;
+    }
+
+    if (!lastName) {
+      setError("Nama belakang tidak boleh kosong.");
+      setIsLoading(false);
+      return;
+    }
+
+    if (!gender) {
+      setError("Silakan pilih gender Anda.");
       setIsLoading(false);
       return;
     }
@@ -66,7 +86,9 @@ export default function CreateProfile() {
       const formData = new FormData();
 
       // Menambahkan key profile (file) dengan content type otomatis
-      formData.append("profile", selectedImage);
+      if (selectedImage) {
+        formData.append("profile", selectedImage);
+      }
 
       // Menambahkan data text secara manual dengan text/plain
       formData.append("nim", decodedNim);
@@ -212,7 +234,7 @@ export default function CreateProfile() {
             className={`${
               !isFormValid ? "bg-[#CBCBCB]" : "bg-blueSec"
             } relative`}
-            isDisabled={!isFormValid || isLoading}
+            isDisabled={isLoading}
           >
             {isLoading ? (
               <>

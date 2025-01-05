@@ -33,6 +33,7 @@ interface Team {
     endDate: string;
     category: string;
   };
+  phone: string;
 }
 
 interface Notification {
@@ -1134,7 +1135,7 @@ export default function DetailTeam({
                 }`}
               >
                 <Link
-                  href={``}
+                  href={`https://wa.me/${team?.phone || "62081234567890"}`}
                   className="flex flex-row justify-center items-center gap-1 text-blueSec font-poppinsMedium text-md mb-1"
                 >
                   Hubungi Ketua Tim
