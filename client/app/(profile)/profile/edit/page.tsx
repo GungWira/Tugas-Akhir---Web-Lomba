@@ -19,6 +19,7 @@ interface FormData {
   lastname: string;
   major: string;
   password: string;
+  imageUrl: string;
   profile: File | null;
 }
 
@@ -27,6 +28,7 @@ export default function EditProfile() {
   const router = useRouter();
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [majorList, setMajorList] = useState<Major[]>([]);
+  const [isSuccess, setIsSuccess] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -37,6 +39,7 @@ export default function EditProfile() {
     lastname: "",
     major: "",
     password: "",
+    imageUrl: "",
     profile: null,
   });
 
@@ -55,10 +58,18 @@ export default function EditProfile() {
     if (event.target.files && event.target.files[0]) {
       const file = event.target.files[0];
 
-      if (!file.type.startsWith("profile/")) {
+      // Periksa tipe file menggunakan image/* bukan profile/*
+      if (!file.type.startsWith("image/")) {
         setError("File yang diunggah harus berupa gambar.");
         return;
       }
+
+      // Validasi ukuran file (opsional, misalnya max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        setError("Ukuran file tidak boleh lebih dari 5MB");
+        return;
+      }
+
       setSelectedImage(file);
       setFormData((prev) => ({
         ...prev,
@@ -113,6 +124,7 @@ export default function EditProfile() {
         lastname: user.lastName || "",
         major: user.major || "",
         password: "",
+        imageUrl: user.imageUrl || "",
         profile: null,
       });
       setLoading(false);
@@ -122,6 +134,7 @@ export default function EditProfile() {
   // Update handler submit
   const handlerSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setError(null);
     setLoading(true);
     try {
       if (
@@ -134,8 +147,10 @@ export default function EditProfile() {
         throw new Error("Semua field harus diisi");
       }
 
+      console.log(formData);
+
       // Kirim data ke context update
-      await update({
+      const updateData = await update({
         id: formData.id,
         firstname: formData.firstname,
         lastname: formData.lastname,
@@ -144,7 +159,17 @@ export default function EditProfile() {
         profile: formData.profile,
       });
 
-      router.push("/profile");
+      if (updateData.status == 400) {
+        throw new Error("Gagal mengubah data. Password salah!");
+      } else if (!updateData.ok) {
+        throw new Error(
+          "Gagal mengubah data. Mohon mencoba beberapa saat lagi"
+        );
+      } else {
+        setIsSuccess(true);
+      }
+
+      // router.push("/profile");
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);
@@ -175,6 +200,11 @@ export default function EditProfile() {
                 {error}
               </div>
             )}
+            {isSuccess && (
+              <div className="w-full p-3 bg-green-100 text-green-600 rounded-lg">
+                Berhasil mengubah data!
+              </div>
+            )}
             {/* PROFILE */}
             <div className="relative overflow-hidden">
               <div className="w-36 h-36 object-cover border rounded-full overflow-hidden">
@@ -182,7 +212,8 @@ export default function EditProfile() {
                   src={
                     selectedImage
                       ? URL.createObjectURL(selectedImage)
-                      : `/imgs/create-account-imgs/default-img.svg`
+                      : formData.imageUrl ||
+                        `/imgs/create-account-imgs/default-img.svg`
                   }
                   alt="Image Profile Preview"
                   width={1}
@@ -192,7 +223,7 @@ export default function EditProfile() {
               </div>
               <input
                 type="file"
-                accept="profile/*"
+                accept="image/*"
                 onChange={handleImageUpload}
                 name="img"
                 id="img"
@@ -291,7 +322,9 @@ export default function EditProfile() {
             <Button
               type="submit"
               isDisabled={loading}
-              className={`${loading ? "opacity-70" : ""}`}
+              className={`${
+                loading ? "opacity-70 flex justify-center items-center" : ""
+              }`}
             >
               {loading ? (
                 <div className="flex items-center gap-2">

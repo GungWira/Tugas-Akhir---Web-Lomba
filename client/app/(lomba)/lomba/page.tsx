@@ -7,6 +7,8 @@ import { useEffect, useState } from "react";
 import { formatDate } from "@/utils/formatDate";
 import CompetitionCard from "@/components/CompetitionCard";
 import Footer from "@/components/Footer";
+import Link from "next/link";
+import Button from "@/components/Button";
 
 interface Card {
   id: string;
@@ -49,10 +51,6 @@ export default function Lomba() {
             return endDate > currentDate;
           }
         );
-        if (filteredCompetitions.length == 0) {
-          router.push("/");
-          return;
-        }
         setCompetitionCards(filteredCompetitions);
         setLoading(false);
       } catch (err: unknown) {
@@ -146,7 +144,38 @@ export default function Lomba() {
         </div>
 
         {/* CARD */}
-        <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 justify-start items-start gap-4 min-h-[70vh]">
+        <div
+          className={`w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 justify-start items-start gap-4 min-h-[70vh] ${
+            filteredCompetitions.length == 0 &&
+            !loading &&
+            "sm:grid-cols-1 md:grid-cols-1"
+          }`}
+        >
+          {filteredCompetitions.length == 0 && !loading && (
+            <div className="w-full py-12 bg-white rounded-xl p-8 gap-2 flex flex-col justify-center items-center">
+              <div className="w-20 aspect-square overflow-hidden">
+                <Image
+                  src={"/imgs/profile/dizzy.svg"}
+                  alt="Fail Fetch Icon"
+                  width={1}
+                  height={1}
+                  layout="responsive"
+                />
+              </div>
+              <p className="font-poppinsSemiBold text-normalText text-base text-center">
+                Uuups...
+              </p>
+              <p className="font-poppinsRegular text-normalText text-sm opacity-70 text-center">
+                Belum ada kompetisi yang tersedia, silahkan coba lagi nanti!
+              </p>
+              <Link
+                href={"/"}
+                className="w-full flex justify-center items-center"
+              >
+                <Button className="max-w-72">Beranda</Button>
+              </Link>
+            </div>
+          )}
           {(loading ? Array.from({ length: 6 }) : filteredCompetitions).map(
             (card, index) => {
               if (loading) {

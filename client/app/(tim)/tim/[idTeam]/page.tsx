@@ -238,6 +238,23 @@ export default function DetailTeam({
   };
 
   const handlerAccept = async (memberId: string) => {
+    setAlertData({
+      title: "Terima Anggota?",
+      description: "Apakah anda yakin ingin menerima anggota ini?",
+      onConfirm: () => processAccept(memberId),
+      isLoading: false,
+      isOneWay: false,
+    });
+    setAlertOpen(true);
+  };
+
+  const processAccept = async (memberId: string) => {
+    setAlertData({
+      title: "Loading",
+      description: "Sedang memproses permintaan...",
+      isLoading: true,
+    });
+
     try {
       if (user && slug) {
         const response = await fetch(
@@ -255,12 +272,12 @@ export default function DetailTeam({
             credentials: "include",
           }
         );
-        if (!response.ok)
-          throw new Error(
-            "Gagal menambahkan anggota. Mohon mencoba beberapa saat lagi"
-          );
+
+        if (!response.ok) throw new Error("Gagal menambahkan anggota");
+
         const data = await response.json();
-        setTeam(data.updatedTeam);
+        console.log(data.enrichedTeam);
+        setTeam(data.enrichedTeam);
 
         const responses = await fetch(
           `https://lomba-backend.vercel.app/notification/${user.id}`,
@@ -272,20 +289,50 @@ export default function DetailTeam({
             credentials: "include",
           }
         );
+
         if (!responses.ok) throw new Error("Gagal mengambil data notifikasi");
+
         const datas = await responses.json();
         setNotificationList(datas.notifications);
-      } else {
-        setError("Gagal mengikuti tim. Mohon mencoba beberapa saat lagi");
+
+        setAlertData({
+          title: "Berhasil",
+          description: "Berhasil menerima anggota baru",
+          onConfirm: () => setAlertOpen(false),
+          isLoading: false,
+          isOneWay: true,
+        });
       }
     } catch (error: unknown) {
-      if (error instanceof Error) {
-        setError(error.message);
-      }
+      setAlertData({
+        title: "Gagal",
+        description:
+          error instanceof Error ? error.message : "Terjadi kesalahan",
+        onConfirm: () => setAlertOpen(false),
+        isLoading: false,
+        isOneWay: true,
+      });
     }
   };
 
   const handlerReject = async (memberId: string) => {
+    setAlertData({
+      title: "Tolak Anggota?",
+      description: "Apakah anda yakin ingin menolak anggota ini?",
+      onConfirm: () => processReject(memberId),
+      isLoading: false,
+      isOneWay: false,
+    });
+    setAlertOpen(true);
+  };
+
+  const processReject = async (memberId: string) => {
+    setAlertData({
+      title: "Loading",
+      description: "Sedang memproses permintaan...",
+      isLoading: true,
+    });
+
     try {
       if (user && slug) {
         const response = await fetch(
@@ -303,11 +350,9 @@ export default function DetailTeam({
             credentials: "include",
           }
         );
-        if (!response.ok)
-          throw new Error(
-            "Gagal menambahkan anggota. Mohon mencoba beberapa saat lagi"
-          );
-        // FETCH ULANG DATA USER
+
+        if (!response.ok) throw new Error("Gagal menolak anggota");
+
         const responses = await fetch(
           `https://lomba-backend.vercel.app/notification/${user.id}`,
           {
@@ -318,16 +363,29 @@ export default function DetailTeam({
             credentials: "include",
           }
         );
+
         if (!responses.ok) throw new Error("Gagal mengambil data notifikasi");
+
         const data = await responses.json();
         setNotificationList(data.notifications);
-      } else {
-        setError("Gagal mengikuti tim. Mohon mencoba beberapa saat lagi");
+
+        setAlertData({
+          title: "Berhasil",
+          description: "Berhasil menolak anggota",
+          onConfirm: () => setAlertOpen(false),
+          isLoading: false,
+          isOneWay: true,
+        });
       }
     } catch (error: unknown) {
-      if (error instanceof Error) {
-        setError(error.message);
-      }
+      setAlertData({
+        title: "Gagal",
+        description:
+          error instanceof Error ? error.message : "Terjadi kesalahan",
+        onConfirm: () => setAlertOpen(false),
+        isLoading: false,
+        isOneWay: true,
+      });
     }
   };
 
@@ -403,8 +461,6 @@ export default function DetailTeam({
     });
     setAlertOpen(true);
   };
-
-  // Tambahkan handler alert untuk stop publish
   const handlerAlertStopPublish = () => {
     setAlertData({
       title: "Hentikan Unggahan?",

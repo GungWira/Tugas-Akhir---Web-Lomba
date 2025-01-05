@@ -27,6 +27,7 @@ export default function Profile() {
   const [newImage, setNewImage] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false); // State untuk loading tombol submit
   const [submitStatus, setSubmitStatus] = useState<string | null>(null); // State untuk status submit
+  const [isSuccess, setIsSuccess] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
 
@@ -90,7 +91,6 @@ export default function Profile() {
           setSubmitStatus("Gagal memperbarui data. Silakan coba lagi.");
         }
       } else {
-        setSubmitStatus("Data berhasil diperbarui!");
         setFormData({
           id: user.id || "",
           firstname: user.firstName || "",
@@ -99,6 +99,7 @@ export default function Profile() {
           profileImage: user.imageUrl || "",
           password: "",
         });
+        setIsSuccess(true);
       }
       setLoading(false);
     }
@@ -419,6 +420,16 @@ export default function Profile() {
           {/* BOX EDIT */}
           <div className="flex flex-col justify-start items-start w-full p-6 rounded-xl gap-4 bg-white">
             <div className="flex flex-col justify-start items-start gap-1 w-full">
+              {submitStatus && (
+                <div className="w-full p-3 bg-red-100 text-red-600 rounded-lg mb-3">
+                  {submitStatus}
+                </div>
+              )}
+              {isSuccess && (
+                <div className="w-full p-3 bg-green-100 text-green-600 rounded-lg mb-3">
+                  Berhasil mengubah data!
+                </div>
+              )}
               <p className="text-normalText font-poppinsSemiBold text-xl">
                 Edit Profil
               </p>

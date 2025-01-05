@@ -29,10 +29,14 @@ export default function Competition() {
     const fetchData = async () => {
       try {
         if (user) {
+          console.log(user.id);
           const response = await fetch(
-            `https://lomba-backend.vercel.app/profile/competitions`,
+            `https://lomba-backend.vercel.app/profile/competitionUser`,
             {
               method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
               body: JSON.stringify({
                 userId: user.id,
               }),

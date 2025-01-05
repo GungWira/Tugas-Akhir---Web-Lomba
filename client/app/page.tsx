@@ -136,7 +136,7 @@ export default function Home() {
               return endDate > currentDate;
             }
           );
-          setCompetitionCards(filteredCompetition);
+          setCompetitionCards(filteredCompetition.slice(0, 3));
 
           const responseTeam = await fetch(
             "https://lomba-backend.vercel.app/teams",
@@ -150,13 +150,12 @@ export default function Home() {
             throw new Error("Failed to fetch team cards");
           }
           const dataTeam = await responseTeam.json();
-          // Filter tim berdasarkan slot terbuka dan tanggal akhir lomba belum lewat
           const filteredTeams = dataTeam.filter((team: Teams) => {
             const endDate = new Date(team.competition.endDate);
             return team.openSlots > 0 && endDate > currentDate;
           });
-          const dataTeamFiltered = filteredTeams;
-
+          const dataTeamFiltered = filteredTeams.slice(0, 3);
+          console.log(dataTeamFiltered);
           setTeamCards(dataTeamFiltered);
         } catch (err: unknown) {
           if (err instanceof Error) {
@@ -409,7 +408,12 @@ export default function Home() {
                 <p className="text-sm md:text-base font-poppinsRegular text-white opacity-70 md:max-w-80">
                   Yuk temukan info lomba terbaru dan tingkatkan prestasimu!
                 </p>
-                <Button className="hidden max-w-fit px-8 md:mt-2 md:flex">
+                <Button
+                  className="hidden max-w-fit px-8 md:mt-2 md:flex"
+                  onClick={() => {
+                    router.push("/lomba");
+                  }}
+                >
                   Mulai Sekarang
                 </Button>
               </div>

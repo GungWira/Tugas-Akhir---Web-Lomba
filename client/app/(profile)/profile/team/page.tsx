@@ -90,6 +90,7 @@ export default function Team() {
       }
     }
   };
+
   return (
     <div className="w-full flex justify-center items-center">
       <div className="w-full relative bg-blueFade min-h-screen md:hidden">
