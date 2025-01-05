@@ -18,7 +18,7 @@ export default function FindTeam() {
   useEffect(() => {
     if (user) {
       if (user.role !== "ADMIN") {
-        router.push("/login");
+        router.push("/");
       }
     }
   }, [user, router]);

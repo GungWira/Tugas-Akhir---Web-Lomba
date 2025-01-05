@@ -29,6 +29,7 @@ export default function CreateAccount() {
   async function handlerSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setLoading(true);
+    setError(null);
     try {
       if (
         email &&
@@ -71,8 +72,13 @@ export default function CreateAccount() {
             );
             if (!response.ok) {
               setLoading(false);
-
-              throw new Error("Gagal membuat akun, mohon mencoba kembali");
+              if (response.status == 409) {
+                throw new Error(
+                  "NIM sudah terdaftar, mohon gunakan NIM lainnya"
+                );
+              } else {
+                throw new Error("Gagal membuat akun, mohon mencoba kembali");
+              }
             } else {
               setLoading(false);
 
