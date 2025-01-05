@@ -4,25 +4,40 @@ import Button from "@/components/Button";
 import NavbarBackTitled from "@/components/NavbarBackTitled";
 import { useEffect, useState } from "react";
 import { useUser } from "@/contexts/UserContext";
+import Alert from "@/components/Alert";
+import { useRouter } from "next/navigation";
 
 export default function CompetitionForm({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
+  const router = useRouter();
   const { user } = useUser();
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
   const [slug, setSlug] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<string>("");
   const [proofFile, setProofFile] = useState<File | null>(null);
   const [participantsFile, setParticipantsFile] = useState<File | null>(null);
+  const [alertData, setAlertData] = useState<{
+    isLoading: boolean;
+    description: string;
+    title: string;
+    isOneWay?: boolean;
+  }>();
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     const getSlug = async () => {
       const data = (await params).id;
       setSlug(data);
+
+      setAlertData({
+        isLoading: false,
+        description: "",
+        title: "",
+      });
     };
     getSlug();
   }, [params]);
@@ -40,12 +55,19 @@ export default function CompetitionForm({
   };
 
   const handleSubmit = async () => {
+    setError(null);
     if (!result || !proofFile || !participantsFile) {
       setError("Semua field wajib diisi!");
       return;
     }
 
     setIsLoading(true);
+    setIsOpen(true);
+    setAlertData({
+      isLoading: true,
+      description: "Memproses data hasil perlombaan anda...",
+      title: "Loading",
+    });
 
     const formData = new FormData();
     if (user && user.id) {
@@ -73,7 +95,13 @@ export default function CompetitionForm({
       setProofFile(null);
       setParticipantsFile(null);
       setResult("");
-      setSuccess("Data berhasil dikirim!");
+      setAlertData({
+        isLoading: false,
+        description:
+          "Data hasil perlombaan berhasil dikirim! Selamat atas hasil yang anda raih!",
+        title: "Success",
+        isOneWay: true,
+      });
     } catch (err: unknown) {
       console.error(
         err instanceof Error
@@ -137,11 +165,6 @@ export default function CompetitionForm({
             *{error}
           </p>
         )}
-        {success && (
-          <p className="text-green-600 font-poppinsRegular text-sm my-1">
-            *{success}
-          </p>
-        )}
 
         <div className="fixed bottom-4 left-0 p-6 w-full md:p-0 md:bottom-0 md:relative">
           <Button
@@ -162,6 +185,17 @@ export default function CompetitionForm({
           </Button>
         </div>
       </div>
+
+      <Alert
+        isOpen={isOpen}
+        onConfirm={() => router.push(`/lomba/${slug}`)}
+        onReject={() => setIsOpen(false)}
+        description={alertData?.description || ""}
+        isLoading={alertData?.isLoading || false}
+        isOneWay={alertData?.isOneWay || false}
+      >
+        {alertData?.title || ""}
+      </Alert>
     </div>
   );
 }

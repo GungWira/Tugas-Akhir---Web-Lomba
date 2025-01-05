@@ -60,8 +60,10 @@ export default function Lomba() {
       <div className="flex flex-col justify-start items-start p-4 pt-0 gap-2 mt-24 w-full min-h-screen max-w-6xl">
         <p className="text-base font-poppinsSemiBold">Semua Tim</p>
         <div
-          className={`w-full flex md:grid md:grid-cols-2 xl:grid-cols-3t flex-col justify-start items-start gap-4 ${
-            teams.length == 0 && !loading && "sm:grid-cols-1 md:grid-cols-1"
+          className={`w-full flex md:grid flex-col justify-start items-start gap-4 ${
+            teams.length == 0 && !loading ? "md:grid-cols-1" : "md:grid-cols-2"
+          } ${
+            teams.length == 0 && !loading ? "xl:grid-cols-1" : "xl:grid-cols-3"
           }`}
         >
           {teams.length == 0 && !loading && (

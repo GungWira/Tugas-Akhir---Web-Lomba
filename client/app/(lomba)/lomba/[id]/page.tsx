@@ -363,10 +363,42 @@ export default function DetailLomba({
                   onClick={handleResult}
                   isDisabled={loading}
                   className={`${
-                    join ? (reimburse ? "flex" : "hidden") : "hidden"
+                    join
+                      ? reimburse
+                        ? resultDetail && resultDetail.evidenceUrl
+                          ? "hidden"
+                          : "flex"
+                        : "hidden"
+                      : "hidden"
                   } justify-center items-center`}
                 >
                   Result
+                </Button>
+                {/* RESULT DETAIL */}
+                <Button
+                  isDisabled={true}
+                  className={`${
+                    join
+                      ? reimburse
+                        ? resultDetail?.evidenceUrl
+                          ? "flex"
+                          : "hidden"
+                        : "hidden"
+                      : "hidden"
+                  } justify-center items-center bg-transparent border border-blueSec text-blueSec`}
+                  isTextBlue={true}
+                >
+                  {resultDetail?.result || "Belum ada hasil"}
+                </Button>
+                {/* REIMBURSE DETAIL */}
+                <Button
+                  onClick={handleReimburseDetail}
+                  isDisabled={loading}
+                  className={`${
+                    join ? (reimburse ? "flex" : "hidden") : "hidden"
+                  } justify-center items-center`}
+                >
+                  Detail Reimburse
                 </Button>
               </div>
             ) : (
@@ -437,7 +469,7 @@ export default function DetailLomba({
                   {handleDate(card?.endDate || null) || "31 Desember"}
                 </div>
               </div>
-              <div className="flex flex-col w-full gap-2 overflow-x-scroll">
+              <div className="flex flex-col w-full gap-2 overflow-x-hidden">
                 {loading ? (
                   <div className="text-sm my-2 font-poppinsRegular w-full h-24 bg-[#F1F2F6] text-[#F1F2F6]">
                     p
@@ -568,7 +600,7 @@ export default function DetailLomba({
                       className={`${
                         join
                           ? reimburse
-                            ? resultDetail?.evidenceUrl
+                            ? resultDetail && resultDetail.evidenceUrl
                               ? "hidden"
                               : "flex"
                             : "hidden"
@@ -583,12 +615,13 @@ export default function DetailLomba({
                       className={`${
                         join
                           ? reimburse
-                            ? resultDetail?.evidenceUrl
+                            ? resultDetail && resultDetail.evidenceUrl
                               ? "flex"
                               : "hidden"
                             : "hidden"
                           : "hidden"
-                      } justify-center items-center`}
+                      } justify-center items-center bg-transparent border border-blueSec text-blueSec`}
+                      isTextBlue={true}
                     >
                       {resultDetail?.result || "Belum ada hasil"}
                     </Button>

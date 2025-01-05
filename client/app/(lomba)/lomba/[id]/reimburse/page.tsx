@@ -6,6 +6,8 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import bankList from "@/utils/bank-list/bank.json";
 import { useUser } from "@/contexts/UserContext";
+import Alert from "@/components/Alert";
+import { useRouter } from "next/navigation";
 
 export default function Reimburse({
   params,
@@ -13,8 +15,8 @@ export default function Reimburse({
   params: Promise<{ id: string }>;
 }) {
   const { user } = useUser();
+  const router = useRouter();
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
   const [slug, setSlug] = useState<string | null>(null);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -24,10 +26,24 @@ export default function Reimburse({
   const [selectedBank, setSelectedBank] = useState<string>("");
   const [accountNumber, setAccountNumber] = useState<string>("");
 
+  const [alertData, setAlertData] = useState<{
+    isLoading: boolean;
+    description: string;
+    title: string;
+    isOneWay?: boolean;
+  }>();
+  const [isOpen, setIsOpen] = useState(false);
+
   useEffect(() => {
     const getSlug = async () => {
       const data = (await params).id;
       setSlug(data);
+
+      setAlertData({
+        isLoading: false,
+        description: "",
+        title: "",
+      });
     };
     getSlug();
   }, [params]);
@@ -51,6 +67,8 @@ export default function Reimburse({
 
   // Handle form submission
   const handleUpload = async () => {
+    setError(null);
+
     if (!recipientName || !selectedBank || !accountNumber) {
       setError("Semua field wajib diisi!");
       return;
@@ -62,6 +80,12 @@ export default function Reimburse({
     }
 
     setIsLoading(true);
+    setIsOpen(true);
+    setAlertData({
+      isLoading: true,
+      description: "Memproses data reimburse anda...",
+      title: "Loading",
+    });
 
     const formData = new FormData();
     if (user && user.id) {
@@ -93,7 +117,13 @@ export default function Reimburse({
       setRecipientName("");
       setSelectedBank("");
       setAccountNumber("");
-      setSuccess("Data berhasil diunggah!");
+      setAlertData({
+        isLoading: false,
+        description:
+          "Data reimburse berhasil dikirim! Silahkan pantau status reimburse anda di halaman lomba.",
+        title: "Success",
+        isOneWay: true,
+      });
     } catch (err: unknown) {
       if (err instanceof Error) {
         console.error(err.message);
@@ -168,13 +198,7 @@ export default function Reimburse({
           ) : (
             ""
           )}
-          {success ? (
-            <p className="text-green-600 font-poppinsRegular text-sm my-1">
-              *{success}
-            </p>
-          ) : (
-            ""
-          )}
+
           <label
             htmlFor="file-upload"
             className="aspect-video md:aspect-auto md:h-72 overflow-hidden w-full mt-2 bg-white border-2 border-dashed border-[#DDDDDD] rounded-xl flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 transition"
@@ -231,6 +255,17 @@ export default function Reimburse({
           </Button>
         </div>
       </div>
+
+      <Alert
+        isOpen={isOpen}
+        onConfirm={() => router.push(`/lomba/${slug}`)}
+        onReject={() => setIsOpen(false)}
+        description={alertData?.description || ""}
+        isLoading={alertData?.isLoading || false}
+        isOneWay={alertData?.isOneWay || false}
+      >
+        {alertData?.title || ""}
+      </Alert>
     </div>
   );
 }

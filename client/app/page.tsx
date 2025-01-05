@@ -60,6 +60,7 @@ export default function Home() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [dataLoad, setDataLoad] = useState(false);
 
   async function onLogin(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -99,14 +100,19 @@ export default function Home() {
           setIsLogin(user.isLogin);
           if (user.isLogin) {
             if (user.role === "ADMIN") {
+              setDataLoad(true);
               router.push("/admin");
             } else {
+              setDataLoad(true);
               setIsIntroHidden(true);
             }
           }
+          setDataLoad(true);
         }
       } catch (err: unknown) {
-        console.log("Error verifying login :", err);
+        if (err) {
+          setDataLoad(true);
+        }
       }
     };
     checkLogin();
@@ -155,7 +161,6 @@ export default function Home() {
             return team.openSlots > 0 && endDate > currentDate;
           });
           const dataTeamFiltered = filteredTeams.slice(0, 3);
-          console.log(dataTeamFiltered);
           setTeamCards(dataTeamFiltered);
         } catch (err: unknown) {
           if (err instanceof Error) {
@@ -255,12 +260,20 @@ export default function Home() {
           </p>
           <Button
             onClick={handleIntroHide}
+            isDisabled={!dataLoad}
             className={`md:max-w-[512px] ${
               isIntroHidden ? "animate-moveUpAndFade " : ""
             }`}
             style={{ animationDelay: `300ms` }}
           >
-            Berikutnya
+            {!dataLoad ? (
+              <div className="flex items-center gap-2 justify-center w-full">
+                <div className="w-5 h-5 border-2 border-white rounded-full animate-spin border-t-transparent opacity-70"></div>
+                <span>Mengambil data...</span>
+              </div>
+            ) : (
+              "Berikutnya"
+            )}
           </Button>
         </div>
       </div>
