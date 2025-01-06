@@ -15,6 +15,8 @@ interface UserReimburse {
     leader: {
       id: string;
       student_id: string;
+      profile: string;
+      name: string;
     };
     members: [
       {
@@ -146,7 +148,7 @@ export default function ReimbursePage({
   };
 
   return (
-    <div className="w-full h-screen flex justify-start items-start">
+    <div className="w-full h-screen flex justify-center items-start">
       <NavbarBack>Ajuan Reimburse</NavbarBack>
       <div className="w-full min-h-screen pt-24 flex max-w-6xl justify-center items-center">
         <div
@@ -162,6 +164,7 @@ export default function ReimbursePage({
               <div className="w-12 aspect-square rounded-full overflow-hidden">
                 <Image
                   src={
+                    reimburseData?.competition.leader.profile ||
                     reimburseData?.competition.members[0].profile ||
                     "/imgs/dashboard-imgs/Default-Profile-Img.svg"
                   }
@@ -173,10 +176,14 @@ export default function ReimbursePage({
               </div>
               <div className="flex flex-col justify-start items-start gap-0">
                 <p className="font-poppinsSemiBold text-base text-normalText">
-                  {reimburseData?.competition.members[0].name}
+                  {reimburseData?.competition.leader.name ||
+                    reimburseData?.competition.members[0].name ||
+                    "User"}
                 </p>
                 <p className="font-poppinsMedium text-xs text-normalText opacity-80">
-                  {reimburseData?.competition.leader.student_id}
+                  {reimburseData?.competition.leader.student_id ||
+                    reimburseData?.competition.leader.student_id ||
+                    "User Student ID"}
                 </p>
               </div>
             </div>
@@ -319,7 +326,7 @@ export default function ReimbursePage({
               onClick={handleApprove}
               className={`${
                 status == "PENDING" || status == "PROCESS" ? "flex" : "hidden"
-              }`}
+              } flex justify-center items-center`}
             >
               Setujui
             </Button>
@@ -327,7 +334,7 @@ export default function ReimbursePage({
               onClick={handleReject}
               className={`bg-[#F1F2F6] text-normalText ${
                 status == "PENDING" || status == "PROCESS" ? "flex" : "hidden"
-              }`}
+              } flex justify-center items-center`}
               style={{ backgroundColor: "#F1F2F6", color: "#101010" }}
             >
               Tolak
@@ -335,7 +342,7 @@ export default function ReimbursePage({
             <Button
               className={`${
                 status ? (status == "APPROVED" ? "" : "hidden") : "hidden"
-              } bg-green-700`}
+              } bg-green-700 flex justify-center items-center`}
               isDisabled={true}
             >
               Disetujui
@@ -343,7 +350,7 @@ export default function ReimbursePage({
             <Button
               className={`${
                 status ? (status == "REJECTED" ? "" : "hidden") : "hidden"
-              } bg-red-700`}
+              } bg-red-700 flex justify-center items-center`}
               isDisabled={true}
             >
               Ditolak
