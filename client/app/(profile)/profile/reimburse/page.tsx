@@ -72,39 +72,39 @@ export default function Reimburses() {
   const handleColor = (status: string) => {
     switch (status.toUpperCase()) {
       case "PENDING":
-        return "bg-[#FFB800]";
-      case "APPROVE":
+        return "bg-transparent";
+      case "APPROVED":
         return "bg-blueSec";
-      case "REJECT":
-        return "bg-[#FF0000]";
+      case "REJECTED":
+        return "bg-[#F8D9D9]";
       default:
-        return "bg-[#FFB800]"; // default fallback
+        return "bg-[#032038]"; // default fallback
     }
   };
 
   const handleColorText = (status: string) => {
     switch (status.toUpperCase()) {
       case "PENDING":
-        return "text-[#FFB800]";
-      case "APPROVE":
-        return "text-blueSec";
-      case "REJECT":
-        return "text-[#FF0000]";
+        return "text-[#FFBD00]";
+      case "APPROVED":
+        return "text-white";
+      case "REJECTED":
+        return "text-[#D00000]";
       default:
-        return "text-[#FFB800]"; // default fallback
+        return "text-white"; // default fallback
     }
   };
 
   const handleBorder = (status: string) => {
     switch (status.toUpperCase()) {
       case "PENDING":
-        return "border-[#FFB800]";
-      case "APPROVE":
+        return "border-[#FFBD00]";
+      case "APPROVED":
         return "border-blueSec";
-      case "REJECT":
-        return "bg-[#FF0000]";
+      case "REJECTED":
+        return "bg-[#F8D9D9]";
       default:
-        return "bg-[#FFB800]"; // default fallback
+        return "bg-[#032038]"; // default fallback
     }
   };
 
@@ -112,9 +112,9 @@ export default function Reimburses() {
     switch (status.toUpperCase()) {
       case "PENDING":
         return "Diproses";
-      case "APPROVE":
+      case "APPROVED":
         return "Diterima";
-      case "REJECT":
+      case "REJECTED":
         return "Ditolak";
       default:
         return "Menunggu"; // default fallback
@@ -125,9 +125,9 @@ export default function Reimburses() {
     switch (status.toUpperCase()) {
       case "PENDING":
         return "/imgs/profile/pending.svg";
-      case "APPROVE":
+      case "APPROVED":
         return "/imgs/profile/accept.svg";
-      case "REJECT":
+      case "REJECTED":
         return "/imgs/profile/reject.svg";
       default:
         return "/imgs/profile/pending.svg"; // default fallback
@@ -254,14 +254,14 @@ export default function Reimburses() {
                 >
                   <div className="flex flex-row justify-between items-center gap-4">
                     <div
-                      className={`status px-4 py-2 flex flex-row justify-center items-center gap-2 rounded-full overflow-hidden border ${handleBorder(
+                      className={`status px-5 py-1 rounded-full flex flex-row justify-center items-center gap-2 top-4 left-4 border ${handleBorder(
                         card.status
-                      )} ${handleColor(card.status)}}`}
+                      )} ${handleColor(card.status)}`}
                     >
                       <div className="w-4 aspect-square overflow-hidden">
                         <Image
                           src={handleIcon(card.status)}
-                          alt="Icon"
+                          alt="Icon Card"
                           width={1}
                           height={1}
                           layout="responsive"
@@ -548,7 +548,7 @@ export default function Reimburses() {
                         <div
                           className={`status px-5 py-1 rounded-full flex flex-row justify-center items-center gap-2 top-4 left-4 border ${handleBorder(
                             card.status
-                          )} ${handleColor(card.status)}}`}
+                          )} ${handleColor(card.status)}`}
                         >
                           <div className="w-4 aspect-square overflow-hidden">
                             <Image
