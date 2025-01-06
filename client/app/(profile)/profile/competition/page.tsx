@@ -459,8 +459,8 @@ export default function Competition() {
                 </Link>
               </div>
             ) : cards.length == 0 ? (
-              <div className="w-full aspect-square bg-white rounded-xl p-8 gap-2 flex flex-col justify-center items-center">
-                <div className="w-20 aspect-square overflow-hidden">
+              <div className="w-full aspect-square md:aspect-video bg-white rounded-xl p-8 gap-2 flex flex-col justify-center items-center">
+                <div className={`w-20 aspect-square overflow-hidden `}>
                   <Image
                     src={"/imgs/profile/dizzy.svg"}
                     alt="Fail Fetch Icon"
@@ -476,7 +476,7 @@ export default function Competition() {
                   Kamu belum mengikuti kompetisi mana pun! Ikuti kompetisi
                   sekarang!
                 </p>
-                <Link href={"/"} className="w-full">
+                <Link href={"/"} className="w-full md:w-64">
                   <Button>Beranda</Button>
                 </Link>
               </div>
