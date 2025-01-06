@@ -6,6 +6,7 @@ import { useUser } from "@/contexts/UserContext";
 import Image from "next/image";
 import Link from "next/link";
 import Button from "@/components/Button";
+import Alert from "@/components/Alert";
 
 interface UserReimburse {
   cardNumber: string;
@@ -50,6 +51,22 @@ export default function ReimbursePage({
   const [reimburseData, setReimburseData] = useState<UserReimburse | null>(
     null
   );
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [alertData, setAlertData] = useState<{
+    title: string;
+    description: string;
+    onConfirm: () => void;
+    onReject: () => void;
+    isOneWay?: boolean;
+    isLoading?: boolean;
+  }>({
+    title: "",
+    description: "",
+    onConfirm: () => {},
+    onReject: () => {},
+    isOneWay: false,
+    isLoading: false,
+  });
 
   useEffect(() => {
     const getSlug = async () => {
@@ -112,6 +129,13 @@ export default function ReimbursePage({
   }
 
   const handleApprove = async () => {
+    setAlertData({
+      title: "Loading",
+      description: "Memproses proses approve...",
+      onConfirm: () => setIsOpen(false),
+      onReject: () => setIsOpen(false),
+      isLoading: true,
+    });
     try {
       const response = await fetch(
         `https://lomba-backend.vercel.app/admin/reimburse/${slug}/approve`,
@@ -122,14 +146,37 @@ export default function ReimbursePage({
       );
       if (!response.ok) throw new Error("Gagal approve");
       setStatus("APPROVED");
+      setAlertData({
+        title: "Success",
+        description: "Pengajuan reimburse berhasil disetujui",
+        onConfirm: () => setIsOpen(false),
+        onReject: () => setIsOpen(false),
+        isOneWay: true,
+        isLoading: false,
+      });
     } catch (error: unknown) {
       if (error instanceof Error) {
         console.log(error.message);
       }
+      setAlertData({
+        title: "Error",
+        description: "Gagal approve pengajuan reimburse",
+        onConfirm: () => setIsOpen(false),
+        onReject: () => setIsOpen(false),
+        isOneWay: true,
+        isLoading: false,
+      });
     }
   };
 
   const handleReject = async () => {
+    setAlertData({
+      title: "Loading",
+      description: "Memproses proses reject...",
+      onConfirm: () => setIsOpen(false),
+      onReject: () => setIsOpen(false),
+      isLoading: true,
+    });
     try {
       const response = await fetch(
         `https://lomba-backend.vercel.app/admin/reimburse/${slug}/reject`,
@@ -140,11 +187,52 @@ export default function ReimbursePage({
       );
       if (!response.ok) throw new Error("Gagal reject");
       setStatus("REJECTED");
+      setAlertData({
+        title: "Success",
+        description: "Pengajuan reimburse berhasil ditolak",
+        onConfirm: () => setIsOpen(false),
+        onReject: () => setIsOpen(false),
+        isOneWay: true,
+        isLoading: false,
+      });
     } catch (error: unknown) {
       if (error instanceof Error) {
         console.log(error.message);
       }
+      setAlertData({
+        title: "Error",
+        description: "Gagal reject pengajuan reimburse",
+        onConfirm: () => setIsOpen(false),
+        onReject: () => setIsOpen(false),
+        isOneWay: true,
+        isLoading: false,
+      });
     }
+  };
+
+  const handleAlertConfirm = () => {
+    setIsOpen(true);
+    setAlertData({
+      title: "Approve Reimburse",
+      description:
+        "Apakah Anda yakin ingin menyetujui pengajuan reimburse ini?",
+      onConfirm: () => handleApprove(),
+      onReject: () => setIsOpen(false),
+      isOneWay: false,
+      isLoading: false,
+    });
+  };
+
+  const handleAlertReject = () => {
+    setIsOpen(true);
+    setAlertData({
+      title: "Reject Reimburse",
+      description: "Apakah Anda yakin ingin menolak pengajuan reimburse ini?",
+      onConfirm: () => handleReject(),
+      onReject: () => setIsOpen(false),
+      isOneWay: false,
+      isLoading: false,
+    });
   };
 
   return (
@@ -323,7 +411,7 @@ export default function ReimbursePage({
             }`}
           >
             <Button
-              onClick={handleApprove}
+              onClick={handleAlertConfirm}
               className={`${
                 status == "PENDING" || status == "PROCESS" ? "flex" : "hidden"
               } flex justify-center items-center`}
@@ -331,7 +419,7 @@ export default function ReimbursePage({
               Setujui
             </Button>
             <Button
-              onClick={handleReject}
+              onClick={handleAlertReject}
               className={`bg-[#F1F2F6] text-normalText ${
                 status == "PENDING" || status == "PROCESS" ? "flex" : "hidden"
               } flex justify-center items-center`}
@@ -358,6 +446,22 @@ export default function ReimbursePage({
           </div>
         </div>
       </div>
+      <Alert
+        isOpen={isOpen}
+        onConfirm={() => {
+          alertData.onConfirm();
+          setIsOpen(false);
+        }}
+        onReject={() => {
+          alertData.onReject();
+          setIsOpen(false);
+        }}
+        description={alertData.description}
+        isLoading={alertData.isLoading}
+        isOneWay={alertData.isOneWay}
+      >
+        {alertData.title}
+      </Alert>
     </div>
   );
 }

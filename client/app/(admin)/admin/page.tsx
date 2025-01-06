@@ -39,6 +39,7 @@ export default function AdminPage() {
         });
         const data = await response.json();
         setReimburseData(data);
+        console.log(data);
         setNotifications(data.latestReimburses.data);
         setLoading(false);
       } catch (error: unknown) {
